@@ -2,7 +2,9 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -38,3 +40,36 @@ class ChangePasswordView(APIView):
                 status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ListShippingView(APIView):
+     permission_classes = [IsAuthenticated]
+     
+def get(self, request):
+        return Response(
+            {"message": "Aquí se mostrarían los envíos solo si estás autenticado.", "user": request.user.username})
+def post(self, request):
+        return Response(
+            {"message": "Aquí se crearían envíos solo si estás autenticado.", "data_recibida": request.data})
+        
+class ShippingDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        return Response(
+            {"message": f"Detalles del envío {pk} solo si estás autenticado.", "user": request.user.username})
+
+    def put(self, request, pk):
+        return Response(
+            {"message": f"Envío {pk} actualizado solo si estás autenticado.", "data_recibida": request.data})
+
+    def delete(self, request, pk):
+        return Response(
+            {"message": f"Envío {pk} eliminado solo si estás autenticado."})
+        
+        
+class ProtectedTestView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated] # O [AllowAny] si quieres que sea accesible sin token para probar
+
+    def get(self, request):
+        return Response({"message": "Acceso concedido a tu recurso protegido real!"})
