@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from invoicing.models import Invoice
 from clients.models import Client
-from services.models import Service
+from logistics.models import Shipment
 
 class DashboardSummarySerializer(serializers.Serializer):
     total_clients = serializers.IntegerField()
@@ -31,5 +31,5 @@ class TopServiceSerializer(serializers.ModelSerializer):
     total_invoiced = serializers.DecimalField(max_digits=10, decimal_places=2)
     
     class Meta:
-        model = Service
+        model = Shipment
         fields = ['id', 'name', 'times_invoiced', 'total_invoiced']
