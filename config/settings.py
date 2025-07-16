@@ -45,8 +45,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     
     
-
-    
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -79,6 +77,8 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD', default='Dos2siete4'),
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='5432', cast=int), # 'cast=int' para convertir el puerto a entero
+        #libreria dotenv para leer nuesto archivo 
+        # mi sistema os para encontrar el archivo y variables .OS
     }
 }
 
