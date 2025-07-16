@@ -16,25 +16,30 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv(
 
 # Application definition
 INSTALLED_APPS = [
+    # Aplicaciones de Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Third party apps
+
+    # Aplicaciones de Terceros
     'rest_framework',
-    'rest_framework_simplejwt',
     'corsheaders',
-    'django_filters',
+    'dj_rest_auth',
+    'dj_rest_auth.registration', # Para el registro de la API
+    'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
     
     # Local apps
     'accounts',
     'clients',
-    'services',
-    'invoicing',
+    'core',
     'dashboard',
+    'invoicing',
+    'logistics',
 ]
 
 MIDDLEWARE = [
@@ -46,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -72,11 +78,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'proyecto2_crud',
-        'USER': 'postgres',
-        'PASSWORD': 'Dos2siete4',  # La que acabas de establecer
+        'NAME': 'logisticrud',
+        'USER': 'johi',
+        'PASSWORD': 'dos2siete4',  # La que acabas de establecer
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 

@@ -1,19 +1,19 @@
 from rest_framework import serializers
-from .models import Invoice, InvoiceItem
+from .models import Invoice, InvoiceLine
 from clients.models import Client
-from services.models import Service
+from logistics.models import Service
 
-class InvoiceItemSerializer(serializers.ModelSerializer):
+class InvoiceLineSerializer(serializers.ModelSerializer):
     service_name = serializers.ReadOnlyField(source='service.name')
     service_price = serializers.ReadOnlyField(source='service.price')
     
     class Meta:
-        model = InvoiceItem
+        model = InvoiceLine
         fields = '__all__'
         read_only_fields = ('subtotal',)
 
 class InvoiceSerializer(serializers.ModelSerializer):
-    items = InvoiceItemSerializer(many=True, read_only=True)
+    items = InvoiceLineSerializer(many=True, read_only=True)
     client_name = serializers.ReadOnlyField(source='client.name')
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     
@@ -32,7 +32,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             quantity = item_data.get('quantity', 1)
             price = item_data.get('price', service.price)
             
-            InvoiceItem.objects.create(
+            InvoiceLine.objects.create(
                 invoice=invoice,
                 service_id=service_id,
                 quantity=quantity,

@@ -11,15 +11,15 @@ from .serializers import (
     TopServiceSerializer
 )
 from clients.models import Client
-from services.models import Service
-from invoicing.models import Invoice, InvoiceItem
+from logistics.models import Shipment
+from invoicing.models import Invoice, InvoiceLine
 
 class DashboardSummaryView(APIView):
     def get(self, request):
         # Obtener datos para el resumen del dashboard
         total_clients = Client.objects.count()
         active_clients = Client.objects.filter(is_active=True).count()
-        total_services = Service.objects.count()
+        total_services = Shipment.objects.count()
         total_invoices = Invoice.objects.count()
         invoices_pending = Invoice.objects.filter(status='pending').count()
         invoices_paid = Invoice.objects.filter(status='paid').count()
@@ -89,9 +89,9 @@ class TopServicesView(APIView):
         # Obtener los servicios más facturados
         limit = int(request.query_params.get('limit', 5))
         
-        top_services = Service.objects.annotate(
-            times_invoiced=Count('invoiceitem'),
-            total_invoiced=Sum(F('invoiceitem__price') * F('invoiceitem__quantity'))
+        top_services = Shipment.objects.annotate(
+            times_invoiced=Count('invoiceline'),
+            total_invoiced=Sum(F('invoiceline__price') * F('invoiceline__quantity'))
         ).filter(
             times_invoiced__gt=0
         ).order_by('-times_invoiced')[:limit]
