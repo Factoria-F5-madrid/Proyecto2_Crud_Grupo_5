@@ -22,30 +22,31 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
-    'corsheaders',
     'django_filters',
-    
-    # Local apps
     'accounts',
     'clients',
     'services',
     'invoicing',
     'dashboard',
+    'corsheaders',
+    
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    
+    
+
+    
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -69,14 +70,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
+# Usando decouple para manejar la configuración de la base de datos
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'proyecto2_crud',
-        'USER': 'postgres',
-        'PASSWORD': 'Dos2siete4',  # La que acabas de establecer
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'), # Usas la variable del .env
+        'NAME': config('DB_NAME', default='proyecto2_crud'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD', default='Dos2siete4'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432', cast=int), # 'cast=int' para convertir el puerto a entero
     }
 }
 
@@ -104,12 +106,37 @@ REST_FRAMEWORK = {
 
 # JWT settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-}
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tiempo de vida del token de acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Tiempo de vida del token de refresco
+    'ROTATE_REFRESH_TOKENS': False,                  # Si True, cada refresh genera un nuevo refresh token
+    'BLACKLIST_AFTER_ROTATION': True,                # Si True, el refresh token antiguo se añade a la blacklist
+    'UPDATE_LAST_LOGIN': False,                      # Si True, actualiza last_login en el usuario
+    'ALGORITHM': 'HS256',                            # Algoritmo de firma
+    'SIGNING_KEY': SECRET_KEY,                       # Usa la clave secreta de Django asume que estás obteniendo tu SECRET_KEY usando decouple.config
+     'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
 
+    'AUTH_HEADER_TYPES': ('Bearer',),                # Tipo de cabecera de autenticación (Ej: Authorization: Bearer <token>)
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+    
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True if DEBUG else False
+CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000', cast=Csv())
 
 # Internationalization
