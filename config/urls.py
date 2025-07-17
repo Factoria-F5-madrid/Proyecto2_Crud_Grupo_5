@@ -3,8 +3,10 @@ from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from django.conf import settings
-from django.conf.urls.static import static# Importa tu vista protegida real
-from accounts.views import ProtectedTestView # Asegúrate de que esta vista esté definida en accounts/views.py
+from django.conf.urls.static import static
+
+# Importa tu vista protegida real (asegúrate de que esta vista esté definida en accounts/views.py)
+from accounts.views import ProtectedTestView 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -16,6 +18,10 @@ urlpatterns = [
     
     # Añade la URL para tu vista protegida real aquí
     path('api/protected-resource/', ProtectedTestView.as_view(), name='protected_resource_test'),
+    
+    # ¡¡¡AÑADE ESTA LÍNEA!!!
+    path('api/accounts/', include('accounts.urls')), # Incluye las URLs de la aplicación accounts
+
     path('api/clients/', include('clients.urls')),
     path('api/services/', include('services.urls')),
     path('api/invoices/', include('invoicing.urls')),
@@ -29,4 +35,4 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     
-
+    

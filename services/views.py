@@ -1,8 +1,7 @@
 from rest_framework import generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Service, ServiceCategory
-from .serializers import ServiceSerializer, ServiceCategorySerializer, ServiceListSerializer
-
+from .serializers import ServiceSerializer, ServiceCategorySerializer 
 class ServiceCategoryListCreate(generics.ListCreateAPIView):
     queryset = ServiceCategory.objects.all()
     serializer_class = ServiceCategorySerializer

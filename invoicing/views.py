@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from .models import Invoice, InvoiceItem
-from .serializers import InvoiceSerializer, InvoiceItemSerializer, InvoiceListSerializer
+# invoicing/views.py
+from .serializers import InvoiceSerializer, InvoiceItemSerializer 
 import datetime
 
 class InvoiceListCreate(generics.ListCreateAPIView):
