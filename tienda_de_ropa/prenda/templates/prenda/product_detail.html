@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto - {{ product.name }}</title>
+</head>
+<body>
+    <h1>Detalle del Producto: {{ product.name }}</h1>
+    <p><strong>ID:</strong> {{ product.id }}</p>
+    <p><strong>Talla:</strong> {{ product.size }}</p>
+    <p><strong>Color:</strong> {{ product.color }}</p>
+    <p><strong>Precio:</strong> {{ product.price }}</p>
+    <p><strong>Stock:</strong> {{ product.stock }}</p>
+    <p><strong>Categoría:</strong> {{ product.category.name|default:"N/A" }}</p>
+    <p><strong>Fecha de Creación:</strong> {{ product.created_at|date:"Y-m-d H:i" }}</p>
+    <a href="{% url 'prenda:product_update' product.pk %}">Editar Producto</a> |
+    <a href="{% url 'prenda:product_delete' product.pk %}">Eliminar Producto</a> |
+    <a href="{% url 'prenda:product_list' %}">Volver a la Lista</a>
+</body>
+</html>
