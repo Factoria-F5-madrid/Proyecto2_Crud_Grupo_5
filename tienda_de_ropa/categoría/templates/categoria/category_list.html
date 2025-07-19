@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Categorías</title>
+</head>
+<body>
+    <h1>Categorías Disponibles</h1>
+    <a href="{% url 'categoria:category_create' %}">Añadir Nueva Categoría</a>
+    <ul>
+        {% for category in categories %}
+            <li>
+                <a href="{% url 'categoria:category_detail' category.pk %}">{{ category.name }}</a>
+                (<a href="{% url 'categoria:category_update' category.pk %}">Editar</a> | <a href="{% url 'categoria:category_delete' category.pk %}">Eliminar</a>)
+            </li>
+        {% empty %}
+            <li>No hay categorías disponibles.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'prenda:product_list' %}">Ir a Productos</a>
+</body>
+</html>
