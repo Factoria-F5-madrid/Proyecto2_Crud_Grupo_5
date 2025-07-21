@@ -124,3 +124,50 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1, # La versión de la configuración del logging
+    'disable_existing_loggers': False, # No deshabilitar los loggers existentes (ej. los de Django)
+    'formatters': { # Define cómo se formatearán los mensajes de log
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': { # Define dónde se enviarán los mensajes de log
+        'console': { # Un handler que imprime en la consola
+            'level': 'INFO', # Nivel mínimo de mensajes a manejar (INFO, WARNING, ERROR, DEBUG)
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        # Opcional: Para guardar logs en un archivo
+        # 'file': {
+        #     'level': 'WARNING', # Guardará warnings y errores
+        #     'class': 'logging.FileHandler',
+        #     'filename': 'logs/django_warnings.log', # Ruta donde se guardará el archivo de log
+        #     'formatter': 'verbose',
+        # },
+    },
+    'loggers': { # Define los "loggers" que usarán los handlers
+        'django': { # El logger de Django
+            'handlers': ['console'], # Envía los logs de Django a la consola
+            'level': 'INFO', # Muestra INFO, WARNING, ERROR para logs de Django
+            'propagate': True, # Permite que los logs se propaguen a loggers superiores
+        },
+        '': { # El logger "root" (captura mensajes de log de toda la aplicación no manejados por otros loggers)
+            'handlers': ['console'],
+            'level': 'INFO', # Nivel por defecto para tus propias aplicaciones
+            'propagate': False,
+        },
+        # Ejemplo de logger para una aplicación específica (compra)
+        'compra': {
+            'handlers': ['console'], # Envía los logs de la app 'compra' a la consola
+            'level': 'DEBUG', # Puedes ponerlo en DEBUG para ver más detalles durante el desarrollo
+            'propagate': False, # No propagar para evitar duplicidad si el root logger también lo maneja
+        },
+    },
+}
