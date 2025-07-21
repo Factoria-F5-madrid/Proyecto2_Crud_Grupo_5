@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pedidos</title>
+</head>
+<body>
+    <h1>Pedidos Realizados</h1>
+    <a href="{% url 'compra:order_create' %}">Añadir Nuevo Pedido</a>
+    <ul>
+        {% for order in orders %}
+            <li>
+                Pedido #{{ order.id }} - Cliente: {{ order.customer.first_name }} {{ order.customer.last_name }} - Total: ${{ order.total_amount }} - Estado: {{ order.status }}
+                (<a href="{% url 'compra:order_detail' order.pk %}">Ver Detalle</a> |
+                <a href="{% url 'compra:order_update' order.pk %}">Editar</a> |
+                <a href="{% url 'compra:order_delete' order.pk %}">Eliminar</a>)
+            </li>
+        {% empty %}
+            <li>No hay pedidos registrados.</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'prenda:product_list' %}">Ir a Productos</a> |
+    <a href="{% url 'categoria:category_list' %}">Ir a Categorías</a> |
+    <a href="{% url 'cliente:customer_list' %}">Ir a Clientes</a>
+</body>
+</html>
