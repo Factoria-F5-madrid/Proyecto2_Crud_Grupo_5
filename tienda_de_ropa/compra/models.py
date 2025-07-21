@@ -21,7 +21,8 @@ class Order(models.Model):
         ]
 
     def __str__(self):
-        return f"Pedido #{self.id} de {self.customer.first_name} el {self.order_date.strftime('%Y-%m-%d')}"
+
+        return f"Pedido #{self.id} de {self.customer.name} el {self.order_date.strftime('%Y-%m-%d')}"
 
 # Modelo para Ítems del Pedido (Productos dentro de un Pedido)
 class OrderItem(models.Model):
