@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes</title>
+</head>
+<body>
+    <h1>Clientes Registrados</h1>
+    <a href="{% url 'cliente:customer_create' %}">Añadir Nuevo Cliente</a>
+    <ul>
+        {% for customer in customers %}
+            <li>
+                <a href="{% url 'cliente:customer_detail' customer.pk %}">{{ customer.first_name }} {{ customer.last_name }}</a> - {{ customer.email }}
+                (<a href="{% url 'cliente:customer_update' customer.pk %}">Editar</a> | <a href="{% url 'cliente:customer_delete' customer.pk %}">Eliminar</a>)
+            </li>
+        {% empty %}
+            <li>No hay clientes registrados.</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'prenda:product_list' %}">Ir a Productos</a> |
+    <a href="{% url 'categoria:category_list' %}">Ir a Categorías</a>
+</body>
+</html>

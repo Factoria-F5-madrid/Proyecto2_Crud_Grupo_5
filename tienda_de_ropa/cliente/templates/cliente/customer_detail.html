@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Cliente - {{ customer.first_name }}</title>
+</head>
+<body>
+    <h1>Detalle del Cliente: {{ customer.first_name }} {{ customer.last_name }}</h1>
+    <p><strong>ID:</strong> {{ customer.id }}</p>
+    <p><strong>Email:</strong> {{ customer.email }}</p>
+    <p><strong>Teléfono:</strong> {{ customer.phone_number|default:"N/A" }}</p>
+    <p><strong>Dirección:</strong> {{ customer.address|default:"N/A" }}</p>
+    <p><strong>Fecha de Registro:</strong> {{ customer.registration_date|date:"Y-m-d H:i" }}</p>
+    <a href="{% url 'cliente:customer_update' customer.pk %}">Editar Cliente</a> |
+    <a href="{% url 'cliente:customer_delete' customer.pk %}">Eliminar Cliente</a> |
+    <a href="{% url 'cliente:customer_list' %}">Volver a la Lista</a>
+</body>
+</html>
