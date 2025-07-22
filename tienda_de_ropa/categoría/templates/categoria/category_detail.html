@@ -8,8 +8,22 @@
 <body>
     <h1>Detalle de Categoría: {{ category.name }}</h1>
     <p><strong>ID:</strong> {{ category.id }}</p>
+    <p><strong>Descripción:</strong> {{ category.description }}</p>
+
+    <h2>Productos en esta categoría:</h2>
+    {% if products %}
+        <ul>
+            {% for product in products %}
+                <li>{{ product.name }} (Precio: ${{ product.price }}) - ID: {{ product.id }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay productos asociados a esta categoría.</p>
+    {% endif %}
+
+    <br>
     <a href="{% url 'categoria:category_update' category.pk %}">Editar Categoría</a> |
     <a href="{% url 'categoria:category_delete' category.pk %}">Eliminar Categoría</a> |
-    <a href="{% url 'categoria:category_list' %}">Volver a la Lista</a>
+    <a href="{% url 'categoria:category_list' %}">Volver a la Lista de Categorías</a>
 </body>
 </html>

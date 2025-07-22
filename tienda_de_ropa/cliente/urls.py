@@ -1,4 +1,3 @@
-# tienda_de_ropa/cliente/urls.py
 from django.urls import path
 from . import views # Correcto, importa las vistas de esta app
 
