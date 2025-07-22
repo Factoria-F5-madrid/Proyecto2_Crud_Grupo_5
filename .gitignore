@@ -20,6 +20,10 @@ SECRET_KEY='TU_CLAVE_SECRETA_GENERADA_AQUI'
 *.py[cod]
 *$py.class
 
+# SO Files
+*.DS_Store
+*:Zone.Identifier
+
 # C extensions
 *.so
 
