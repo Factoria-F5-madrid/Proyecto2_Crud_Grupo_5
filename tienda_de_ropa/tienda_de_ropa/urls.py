@@ -23,11 +23,12 @@ urlpatterns = [
     # Incluye las URLs HTML de 'prenda' bajo el prefijo '/productos/'
     path('productos/', include('prenda.urls_html')), # ¡Aquí cambiamos a urls_html!   
     path('categorias/', include('categoría.urls')),
-    path('clientes/', include('cliente.urls')),
+    path('clientes/', include('cliente.urls_html')), # ¡Aquí se incluye el urls_html de cliente!
     path('compras/', include('compra.urls')),
 
     # --- URLs para las APIs REST ---
     # Incluye las URLs API de 'prenda' bajo el prefijo '/api/'
     # Usamos el namespace definido en prenda/urls_api.py
     path('api/', include('prenda.urls_api', namespace='api_prenda')), # ¡Aquí cambiamos a urls_api!
+    path('api/', include('cliente.urls_api', namespace='api_cliente')), # Incluye las URLs API de cliente
 ]
