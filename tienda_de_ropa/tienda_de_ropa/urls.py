@@ -19,8 +19,15 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('productos/', include('prenda.urls')),
+    # --- URLs para las VISTAS HTML ---
+    # Incluye las URLs HTML de 'prenda' bajo el prefijo '/productos/'
+    path('productos/', include('prenda.urls_html')), # ¡Aquí cambiamos a urls_html!   
     path('categorias/', include('categoría.urls')),
     path('clientes/', include('cliente.urls')),
     path('compras/', include('compra.urls')),
+
+    # --- URLs para las APIs REST ---
+    # Incluye las URLs API de 'prenda' bajo el prefijo '/api/'
+    # Usamos el namespace definido en prenda/urls_api.py
+    path('api/', include('prenda.urls_api', namespace='api_prenda')), # ¡Aquí cambiamos a urls_api!
 ]
