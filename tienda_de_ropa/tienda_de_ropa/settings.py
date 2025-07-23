@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tienda_de_ropa', 
     'rest_framework',
     
     # Apps
@@ -69,8 +70,9 @@ WSGI_APPLICATION = 'tienda_de_ropa.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+from decouple import config # Importa config para leer variables de entorno
 DATABASES = {
-    'default': {
+     'default': {
         'ENGINE':'django.db.backends.mysql', 
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
