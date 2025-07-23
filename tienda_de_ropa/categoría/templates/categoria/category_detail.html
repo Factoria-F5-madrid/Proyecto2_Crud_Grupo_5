@@ -1,3 +1,4 @@
+<!--tienda_de_ropa/categoria/templates/categoria/category_detail.html-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,8 +7,23 @@
     <title>Detalle de Categoría - {{ category.name }}</title>
 </head>
 <body>
-    <h1>Detalle de Categoría: {{ category.name }}</h1>
-    <p><strong>ID:</strong> {{ category.id }}</p>
+  
+    <h2>{{ category.name }}</h2>
+    {% if productos %}
+        <ul>
+        {% for product in productos %}
+            <li>
+                {{ product.name }} - Tamaño: {{ product.size |upper }} - Color: {{ product.color }} - Precio: ${{ product.price }} - Stock: {{ product.stock }}
+                {# Opcional: un enlace al detalle del producto si tienes una vista 'prenda:product_detail' #}
+                {# <a href="{% url 'prenda:product_detail' product.id %}">Ver Detalle</a> #}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+      <p>No hay productos registrados en esta categoría.</p>
+    {% endif %} 
+    
+
     <a href="{% url 'categoria:category_update' category.pk %}">Editar Categoría</a> |
     <a href="{% url 'categoria:category_delete' category.pk %}">Eliminar Categoría</a> |
     <a href="{% url 'categoria:category_list' %}">Volver a la Lista</a>
