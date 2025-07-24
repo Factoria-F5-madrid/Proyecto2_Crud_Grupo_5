@@ -6,12 +6,19 @@
     <title>Lista de Pedidos</title>
 </head>
 <body>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <h1>Pedidos Realizados</h1>
     <a href="{% url 'compra:order_create' %}">Añadir Nuevo Pedido</a>
     <ul>
         {% for order in orders %}
             <li>
-                Pedido #{{ order.id }} - Cliente: {{ order.customer.first_name }} {{ order.customer.last_name }} - Total: ${{ order.total_amount }} - Estado: {{ order.status }}
+                Pedido #{{ order.pk }} - Cliente: {{ order.customer.name }} - Total: ${{ order.total_amount }} - Estado: {{ order.status }}
                 (<a href="{% url 'compra:order_detail' order.pk %}">Ver Detalle</a> |
                 <a href="{% url 'compra:order_update' order.pk %}">Editar</a> |
                 <a href="{% url 'compra:order_delete' order.pk %}">Eliminar</a>)

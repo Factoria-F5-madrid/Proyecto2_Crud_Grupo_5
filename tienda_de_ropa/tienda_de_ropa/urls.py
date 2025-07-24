@@ -22,27 +22,21 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     # --- URLs para las VISTAS HTML ---
-    # Incluye las URLs HTML de 'prenda' bajo el prefijo '/productos/'
+    # Incluye las URLs HTML de LAS APPS
     path('productos/', include('prenda.urls_html')),
     # Incluye las URLs de 'categoría'. Si este archivo 'categoría/urls.py' contiene vistas HTML,
-    # entonces esta línea es correcta. Si no tienes vistas HTML para categoría,
-    # o si este archivo es un remanente de una configuración anterior de API,
-    # podrías considerar eliminarlo para evitar confusión o redundancia.
+   
     path('categorias/', include('categoría.urls')),
-    path('clientes/', include('cliente.urls')),
-    path('compras/', include('compra.urls')),
+    path('clientes/', include('cliente.urls_html')), # ¡Aquí se incluye el urls_html de cliente!
+    path('compras/', include('compra.urls_html')),
 
-    # --- URLs para las APIs REST ---
-    # Incluye las URLs API de 'prenda' bajo el prefijo '/api/'
-    # Usamos el namespace definido en prenda/urls_api.py
-    path('api/', include('prenda.urls_api', namespace='api_prenda')),
-    # ¡LÍNEA IMPORTANTE!
-    # Aquí incluimos todas las URLs definidas en 'categoria/urls_api.py'.
-    # 'api/categorias/' será el prefijo para todas esas URLs.
-    # Por ejemplo, la ruta '' en urls_api.py se convertirá en '/api/categorias/'.
-    # Y la ruta '<int:pk>/' se convertirá en '/api/categorias/<int:pk>/'.
-    # El 'namespace' debe coincidir con el 'app_name' que definimos en categoria/urls_api.py
+    # --- URLs para las APIs REST de POSTMAN --- 
+    path('api/', include('prenda.urls_api', namespace='api_prenda')), # ¡Aquí cambiamos a urls_api!
+    path('api/', include('cliente.urls_api', namespace='api_cliente')), # Incluye las URLs API de cliente
+    # DESCOMENTAR CUANDO CATEGORIAS FUNCIONE 
+    # path('api/', include('categoría.urls_api', namespace='api_categoria')),
+    path('api/', include('compra.urls_api', namespace='api_compra')),
     path('api/categorias/', include('categoría.urls_api', namespace='categoria_api')),
-    # Aquí es donde, en el futuro, incluirías las URLs de API para otras aplicaciones (cliente, compra)
-    # Ejemplo futuro: path('api/clientes/', include('cliente.urls_api', namespace='cliente_api')),
+
 ]
+

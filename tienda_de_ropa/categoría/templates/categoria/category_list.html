@@ -9,16 +9,24 @@
 <body>
     <h1>Categorías Disponibles</h1>
     <a href="{% url 'categoria:category_create' %}">Añadir Nueva Categoría</a>
-    <ul>
-        {% for category in categories %}
-            <li>
-                <a href="{% url 'categoria:category_detail' category.pk %}">{{ category.name }}</a>
-                (<a href="{% url 'categoria:category_update' category.pk %}">Editar</a> | <a href="{% url 'categoria:category_delete' category.pk %}">Eliminar</a>)
-            </li>
-        {% empty %}
-            <li>No hay categorías disponibles.</li>
-        {% endfor %}
-    </ul>
+    <br><br>
+    {% if categories %}
+        <ul>
+            {% for category in categories %}
+                <li>
+                    {{ category.name }}
+                    (<a href="{% url 'categoria:category_detail' category.pk %}">Ver Detalle</a> 
+                    <a href="{% url 'categoria:category_update' category.pk %}">Editar</a> |
+                    <a href="{% url 'categoria:category_delete' category.pk %}">Eliminar</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay categorías registradas.</p>
+    {% endif %}
+
+    <br>
     <a href="{% url 'prenda:product_list' %}">Ir a Productos</a>
+    {# Puedes añadir enlaces a otras listas aquí si lo necesitas #}
 </body>
 </html>
