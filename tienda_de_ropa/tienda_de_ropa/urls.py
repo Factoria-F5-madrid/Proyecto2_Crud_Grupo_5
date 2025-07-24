@@ -34,4 +34,5 @@ urlpatterns = [
     # DESCOMENTAR CUANDO CATEGORIAS FUNCIONE 
     # path('api/', include('categoría.urls_api', namespace='api_categoria')),
     path('api/', include('compra.urls_api', namespace='api_compra')),
+
 ]
