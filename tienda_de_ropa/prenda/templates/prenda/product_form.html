@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Producto</title>
+</head>
+<body>
+    <h1>{% if form.instance.pk %}Editar{% else %}Añadir{% endif %} Producto</h1>
+    <form method="post">
+        {% csrf_token %} {# ¡Importante para la seguridad de Django! #}
+        {{ form.as_p }} {# Renderiza el formulario como párrafos #}
+        <button type="submit">Guardar</button>
+    </form>
+    <a href="{% url 'prenda:product_list' %}">Cancelar y Volver a la Lista</a>
+</body>
+</html>

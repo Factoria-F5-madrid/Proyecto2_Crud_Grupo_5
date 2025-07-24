@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Customer  # ¡Aquí debe ser 'Customer'!
 
-# Register your models here.
+# Registra tu modelo aquí
+admin.site.register(Customer)

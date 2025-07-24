@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Eliminación de Cliente</title>
+</head>
+<body>
+    <h1>Confirmar Eliminación</h1>
+    <p>¿Estás seguro de que quieres eliminar al cliente "{{ customer.first_name }} {{ customer.last_name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sí, eliminar</button>
+    </form>
+    <a href="{% url 'cliente:customer_detail' customer.pk %}">No, volver al detalle</a> |
+    <a href="{% url 'cliente:customer_list' %}">Volver a la Lista</a>
+</body>
+</html>

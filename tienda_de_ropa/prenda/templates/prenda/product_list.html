@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+</head>
+<body>
+    <h1>Productos Disponibles</h1>
+    <a href="{% url 'prenda:product_create' %}">Añadir Nuevo Producto</a>
+    <ul>
+        {% for product in products %}
+            <li>
+                <a href="{% url 'prenda:product_detail' product.pk %}">{{ product.name }}</a> - {{ product.price }}
+                (<a href="{% url 'prenda:product_update' product.pk %}">Editar</a> | <a href="{% url 'prenda:product_delete' product.pk %}">Eliminar</a>)
+            </li>
+        {% empty %}
+            <li>No hay productos disponibles.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tienda_de_ropa', 
     'rest_framework',
     
     # Apps
@@ -69,14 +70,18 @@ WSGI_APPLICATION = 'tienda_de_ropa.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+from decouple import config # Importa config para leer variables de entorno
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+     'default': {
+        'ENGINE':'django.db.backends.mysql', 
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'PORT': config('DB_PORT', default='3306'), 
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
 
@@ -121,3 +126,50 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1, # La versión de la configuración del logging
+    'disable_existing_loggers': False, # No deshabilitar los loggers existentes (ej. los de Django)
+    'formatters': { # Define cómo se formatearán los mensajes de log
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': { # Define dónde se enviarán los mensajes de log
+        'console': { # Un handler que imprime en la consola
+            'level': 'INFO', # Nivel mínimo de mensajes a manejar (INFO, WARNING, ERROR, DEBUG)
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        # Opcional: Para guardar logs en un archivo
+        # 'file': {
+        #     'level': 'WARNING', # Guardará warnings y errores
+        #     'class': 'logging.FileHandler',
+        #     'filename': 'logs/django_warnings.log', # Ruta donde se guardará el archivo de log
+        #     'formatter': 'verbose',
+        # },
+    },
+    'loggers': { # Define los "loggers" que usarán los handlers
+        'django': { # El logger de Django
+            'handlers': ['console'], # Envía los logs de Django a la consola
+            'level': 'INFO', # Muestra INFO, WARNING, ERROR para logs de Django
+            'propagate': True, # Permite que los logs se propaguen a loggers superiores
+        },
+        '': { # El logger "root" (captura mensajes de log de toda la aplicación no manejados por otros loggers)
+            'handlers': ['console'],
+            'level': 'INFO', # Nivel por defecto para tus propias aplicaciones
+            'propagate': False,
+        },
+        # Ejemplo de logger para una aplicación específica (compra)
+        'compra': {
+            'handlers': ['console'], # Envía los logs de la app 'compra' a la consola
+            'level': 'DEBUG', # Puedes ponerlo en DEBUG para ver más detalles durante el desarrollo
+            'propagate': False, # No propagar para evitar duplicidad si el root logger también lo maneja
+        },
+    },
+}
