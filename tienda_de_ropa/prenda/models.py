@@ -1,6 +1,6 @@
 from django.db import models
 from categoría.models import Category
-
+#tienda_de_ropa/prenda/models.py
 # Modelo para Productos
 class Product(models.Model):
     """
