@@ -1,13 +1,16 @@
 from django import forms
-from .models import Order, Customer # Importa Order y Customer (para el ForeignKey)
+from .models import Order, Customer, OrderItem # Importa Order y Customer (para el ForeignKey)
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = '__all__' # Incluirá customer, order_date, total_amount, status
+        fields = '__all__'
+        # widgets = {
+        #     'order_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        # }
 
-# Si decides hacer un formulario para OrderItem:
-# class OrderItemForm(forms.ModelForm):
-#     class Meta:
-#         model = OrderItem
-#         fields = '__all__' # Incluirá order, product, quantity, price
+
+class OrderItemForm(forms.ModelForm): # <--- Asegúrate de que esta clase exista
+    class Meta:
+        model = OrderItem
+        fields = '__all__'

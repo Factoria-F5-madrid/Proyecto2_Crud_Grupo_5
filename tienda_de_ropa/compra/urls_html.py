@@ -1,16 +1,23 @@
 from django.urls import path
-from . import views
+from . import views # Importa todas las vistas de compra
+from .views import OrderListView, OrderCreateView, OrderUpdateView, OrderDeleteView, order_detail
+# Si OrderItemForm se va a usar en estas vistas, asegúrate de que exista y se importe correctamente.
+# from .views import OrderItemCreateView, OrderItemUpdateView, OrderItemDeleteView
 
-app_name = 'compra' # Usa 'compra' para el namespacing
+
+app_name = 'compra' # Define el espacio de nombres de la aplicación
 
 urlpatterns = [
-    path('', views.order_list, name='order_list'),
-    path('<int:pk>/', views.order_detail, name='order_detail'),
-    path('add/', views.order_create, name='order_create'),
-    path('<int:pk>/edit/', views.order_update, name='order_update'),
-    path('<int:pk>/delete/', views.order_delete, name='order_delete'),
-    # Puedes añadir URLs para OrderItem si decides gestionarlos directamente
-    # path('items/', views.order_item_list, name='order_item_list'),
-    # path('items/<int:pk>/', views.order_item_detail, name='order_item_detail'),
-    # ...
+    # URLs para el modelo Order (Pedido)
+    # Lista de pedidos
+    path('', OrderListView.as_view(), name='order_list'), # CAMBIO AQUÍ: Añadir la coma
+    path('crear/', OrderCreateView.as_view(), name='order_create'), # Vista para crear un nuevo pedido
+    path('<int:pk>/', order_detail, name='order_detail'), # Detalle de un pedido (función-based view)
+    path('<int:pk>/editar/', OrderUpdateView.as_view(), name='order_update'), # Vista para editar un pedido
+    path('<int:pk>/eliminar/', OrderDeleteView.as_view(), name='order_delete'), # Vista para eliminar un pedido
+
+    # # URLs para el modelo OrderItem (Ítem de Pedido) - Descomentar si usas estas vistas
+    # path('items/crear/', OrderItemCreateView.as_view(), name='orderitem_create'),
+    # path('items/<int:pk>/editar/', OrderItemUpdateView.as_view(), name='orderitem_update'),
+    # path('items/<int:pk>/eliminar/', OrderItemDeleteView.as_view(), name='orderitem_delete'),
 ]
