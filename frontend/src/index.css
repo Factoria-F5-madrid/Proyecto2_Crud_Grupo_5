@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    /* Establece el color de fondo naranja de tu diseño para toda la página */
+    background-color: #f28d35cc;
+  }
+
+  /* Opcional: Establece estilos por defecto para los textos, como en tu diseño */
+  h1, p {
+    font-family: serif; /* O la fuente específica que uses */
+    color: #58181F; /* El color de texto oscuro de tu diseño */
+  }
+}
+
+@font-face {
+  font-family: 'Rosalia';
+  /* Ajusta la URL al nombre de tu archivo .otf y el formato a 'opentype' */
+  src: url('@/assets/fonts/Rosalia.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
