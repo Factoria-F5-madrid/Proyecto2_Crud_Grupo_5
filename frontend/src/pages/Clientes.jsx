@@ -41,7 +41,7 @@ const ResponsiveSidebar = () => {
             className="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg md:relative md:translate-x-0"
           >
             <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-xl font-semibold">Sidebar</h2>
+              <h2 className="text-xl font-semibold">Menú</h2>
               <button
                 onClick={toggleSidebar}
                 className="p-2 rounded-md md:hidden hover:bg-gray-200"
