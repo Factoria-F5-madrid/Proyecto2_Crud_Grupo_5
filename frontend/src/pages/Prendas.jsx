@@ -5,6 +5,7 @@ import PrendasBody from '@/components/PrendasBody'
 import logoTexto from '@/assets/FÉNIX.png';
 import logoCirculo from '@/assets/fenix_logo_2.png';
 import fondo from '@/assets/screen.jpg';
+import { Link } from 'react-router-dom';
 
 const ResponsiveSidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -48,25 +49,26 @@ const ResponsiveSidebar = () => {
                 <FiX className="w-6 h-6" />
               </button>
             </div>
-            <nav className="p-4">
+            <nav className="p-9">
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="block p-2 rounded-md hover:bg-gray-200">Inicio</a>
+                  <Link to="/" className="block p-2 rounded-md hover:bg-gray-200">Inicio</Link>
                 </li>
                 <li>
-                  <a href="#" className="block p-2 rounded-md hover:bg-gray-200">Usuarias</a>
+                  <Link to="/usuarias" className="block p-2 rounded-md hover:bg-gray-200">Usuarias</Link>
                 </li>
                 <li>
-                  <a href="#" className="block p-2 rounded-md hover:bg-gray-200">Clientes</a>
+                  <Link to="/clientes" className="block p-2 rounded-md hover:bg-gray-200">Clientes</Link>
                 </li>
                 <li>
-                  <a href="#" className="block p-2 rounded-md hover:bg-gray-200">Ventas</a>
+                  <Link to="/ventas" className="block p-2 rounded-md hover:bg-gray-200">Ventas</Link>
                 </li>
                 <li>
-                  <a href="#" className="block p-2 rounded-md hover:bg-gray-200">Prendas</a>
+                  <Link to="/prendas" className="block p-2 rounded-md hover:bg-gray-200">Prendas</Link>
                 </li>
               </ul>
             </nav>
+
           </motion.div>
         )}
       </AnimatePresence>

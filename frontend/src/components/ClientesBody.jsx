@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FiEdit2, FiTrash2, FiPlus, FiCheck, FiX } from "react-icons/fi";
 
 const CRUDComponent = () => {
@@ -54,7 +54,7 @@ const CRUDComponent = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold text-gray-800">Dataset Management</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Clientes</h2>
         <button
           onClick={() => setIsAdding(true)}
           className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"

@@ -23,23 +23,15 @@ const CRUDApp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-md">
+    <div className="min-h-screen">
+      <header >
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div className="flex items-center">
-            <img
-              src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb"
-              alt="Logo"
-              className="h-10 w-10 rounded-full object-cover"
-            />
-            <h1 className="ml-4 text-2xl font-bold text-gray-900">Inventory Management System</h1>
-          </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Product List</h2>
+          <h1 className="text-xl font-semibold text-gray-900">Ventas</h1>
           <button
             onClick={handleAdd}
             className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
