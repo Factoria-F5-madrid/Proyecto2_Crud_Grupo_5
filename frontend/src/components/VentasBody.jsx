@@ -1,352 +1,145 @@
-import { useState, useEffect } from 'react';
-import { orderAPI, customerAPI, usuariaAPI, productAPI, handleAPIError, downloadFile } from '../services/api';
+import React, { useState } from "react";
+import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
-export default function VentasBody() {
-  const [ventas, setVentas] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [usuarias, setUsuarias] = useState([]);
-  const [prendas, setPrendas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editingVenta, setEditingVenta] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+const CRUDApp = () => {
+  const [items, setItems] = useState([
+    { id: 1, name: "Product A", category: "Electronics", price: 499.99, stock: 50 },
+    { id: 2, name: "Product B", category: "Clothing", price: 79.99, stock: 100 },
+    { id: 3, name: "Product C", category: "Home & Garden", price: 299.99, stock: 25 },
+  ]);
 
-  // Formulario para nueva venta
-  const [formData, setFormData] = useState({
-    usuaria: '',
-    customer: '',
-    product: '',
-    quantity: '1',
-    total: '',
-    date: new Date().toISOString().split('T')[0], // Fecha actual por defecto
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    fetchVentas();
-    fetchClientes();
-    fetchUsuarias();
-    fetchPrendas();
-  }, []);
-
-  const fetchVentas = async () => {
-    try {
-      setLoading(true);
-      const params = searchTerm ? { search: searchTerm } : {};
-      const response = await orderAPI.getAll(params);
-      setVentas(response.data.results || response.data);
-      setError(null);
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      setError(errorInfo.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleAdd = () => {
+    setIsModalOpen(true);
   };
 
-  const fetchClientes = async () => {
-    try {
-      const response = await customerAPI.getAll();
-      setClientes(response.data.results || response.data);
-    } catch (err) {
-      console.error('Error fetching customers:', err);
-    }
+  const handleUpdate = (id) => {
+    console.log("Update item:", id);
   };
 
-  const fetchUsuarias = async () => {
-    try {
-      console.log('Fetching usuarias...');
-      const response = await usuariaAPI.getAll();
-      console.log('Usuarias response:', response);
-      const usuariasData = response.data.results || response.data;
-      console.log('Usuarias data:', usuariasData);
-      setUsuarias(usuariasData);
-    } catch (err) {
-      console.error('Error fetching usuarias:', err);
-    }
+  const handleDelete = (id) => {
+    setItems(items.filter(item => item.id !== id));
   };
-
-  const fetchPrendas = async () => {
-    try {
-      console.log('Fetching prendas...');
-      const response = await productAPI.getAll();
-      console.log('Prendas response:', response);
-      const prendasData = response.data.results || response.data;
-      console.log('Prendas data:', prendasData);
-      setPrendas(prendasData);
-    } catch (err) {
-      console.error('Error fetching prendas:', err);
-    }
-  };
-
-  // Manejador cambio inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Resetear formulario
-  const resetForm = () => {
-    setFormData({
-      usuaria: '',
-      customer: '',
-      product: '',
-      quantity: '1',
-      total: '',
-      date: new Date().toISOString().split('T')[0],
-    });
-    setEditingVenta(null);
-  };
-
-  // Crear o actualizar venta
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const ventaData = {
-        usuaria: parseInt(formData.usuaria),
-        customer: parseInt(formData.customer),
-        product: parseInt(formData.product),
-        quantity: parseInt(formData.quantity),
-        total: parseFloat(formData.total),
-        date: formData.date,
-      };
-
-      if (editingVenta) {
-        await orderAPI.partialUpdate(editingVenta.id, ventaData);
-      } else {
-        await orderAPI.create(ventaData);
-      }
-      resetForm();
-      fetchVentas();
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      alert(errorInfo.message);
-    }
-  };
-
-  // Editar venta
-  const handleEdit = (venta) => {
-    setFormData({
-      usuaria: venta.usuaria?.id?.toString() || '',
-      customer: venta.customer?.id?.toString() || '',
-      product: venta.product?.id?.toString() || '',
-      quantity: venta.quantity?.toString() || '1',
-      total: venta.total.toString(),
-      date: venta.date,
-    });
-    setEditingVenta(venta);
-  };
-
-  // Eliminar venta
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar esta venta?')) {
-      try {
-        await orderAPI.delete(id);
-        fetchVentas();
-      } catch (err) {
-        const errorInfo = handleAPIError(err);
-        alert(errorInfo.message);
-      }
-    }
-  };
-
-  const handleExportCSV = async () => {
-    try {
-      const response = await orderAPI.exportCSV();
-      downloadFile(response.data, 'ventas.csv');
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      alert(errorInfo.message);
-    }
-  };
-
-  if (loading) return <p className="p-6">Cargando ventas...</p>;
-  if (error) return <p className="p-6 text-red-600">{error}</p>;
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Gestión de Ventas</h1>
-        <button 
-          onClick={handleExportCSV}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Exportar CSV
-        </button>
-      </div>
-
-      {/* Búsqueda */}
-      <div className="mb-6 p-4 border rounded shadow bg-gray-50">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Buscar ventas..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <button 
-            onClick={fetchVentas}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Buscar
-          </button>
-          <button 
-            onClick={() => {
-              setSearchTerm('');
-              fetchVentas();
-            }}
-            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-          >
-            Limpiar
-          </button>
-        </div>
-      </div>
-
-      {/* Formulario */}
-      <form onSubmit={handleSubmit} className="mb-8 max-w-md border p-4 rounded shadow">
-        <h2 className="text-xl mb-4 font-semibold">
-          {editingVenta ? 'Editar Venta' : 'Nueva Venta'}
-        </h2>
-
-        <select
-          name="usuaria"
-          value={formData.usuaria}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        >
-          <option value="">Seleccionar Usuaria</option>
-          {usuarias.map(usuaria => (
-            <option key={usuaria.id} value={usuaria.id}>
-              {usuaria.full_name || `${usuaria.first_name} ${usuaria.last_name}`}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="customer"
-          value={formData.customer}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        >
-          <option value="">Seleccionar Cliente</option>
-          {clientes.map(cliente => (
-            <option key={cliente.id} value={cliente.id}>
-              {cliente.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="product"
-          value={formData.product}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        >
-          <option value="">Seleccionar Prenda</option>
-          {prendas.map(prenda => (
-            <option key={prenda.id} value={prenda.id}>
-              {prenda.name} - ${prenda.price}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="number"
-          name="quantity"
-          placeholder="Cantidad"
-          value={formData.quantity}
-          onChange={handleChange}
-          required
-          min="1"
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="number"
-          name="total"
-          placeholder="Total de la venta"
-          value={formData.total}
-          onChange={handleChange}
-          required
-          min="0"
-          step="0.01"
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          required
-          className="w-full mb-4 p-2 border rounded"
-        />
-
-        <div className="flex gap-2">
-          <button type="submit" className="bg-pink-600 text-white py-2 px-4 rounded hover:bg-pink-700">
-            {editingVenta ? 'Actualizar' : 'Crear'} Venta
-          </button>
-          {editingVenta && (
-            <button 
-              type="button"
-              onClick={resetForm}
-              className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
-
-      {/* Lista de ventas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {ventas.map((venta) => (
-          <div key={venta.id} className="border p-4 rounded shadow">
-            <h3 className="text-lg font-semibold mb-2">Venta #{venta.id}</h3>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Usuaria:</span> {venta.usuaria?.name || 'N/A'}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Cliente:</span> {venta.customer?.name || 'N/A'}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Prenda:</span> {venta.product?.name || 'N/A'}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Cantidad:</span> {venta.quantity || 1}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Total:</span> ${parseFloat(venta.total).toFixed(2)}
-            </p>
-            <p className="text-gray-500 text-sm mb-4">
-              <span className="font-medium">Fecha:</span> {new Date(venta.date).toLocaleDateString()}
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(venta)}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => handleDelete(venta.id)}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-              >
-                Eliminar
-              </button>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="flex items-center">
+            <img
+              src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb"
+              alt="Logo"
+              className="h-10 w-10 rounded-full object-cover"
+            />
+            <h1 className="ml-4 text-2xl font-bold text-gray-900">Inventory Management System</h1>
           </div>
-        ))}
-      </div>
+        </div>
+      </header>
 
-      {ventas.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          No hay ventas registradas.
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-gray-900">Product List</h2>
+          <button
+            onClick={handleAdd}
+            className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+          >
+            <FaPlus className="mr-2" />
+            Add New Product
+          </button>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {items.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.category}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.price}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.stock}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button
+                        onClick={() => handleUpdate(item.id)}
+                        className="inline-flex items-center px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
+                      >
+                        <FaEdit className="mr-1" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-200"
+                      >
+                        <FaTrash className="mr-1" />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Add New Product</h3>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              ×
+            </button>
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                <input type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Category</label>
+                <input type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Price</label>
+                <input type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Stock</label>
+                <input type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default CRUDApp;

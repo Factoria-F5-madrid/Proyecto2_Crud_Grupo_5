@@ -1,233 +1,224 @@
-import { useState, useEffect } from 'react';
-import { customerAPI, handleAPIError, downloadFile } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { FiEdit2, FiTrash2, FiPlus, FiCheck, FiX } from "react-icons/fi";
 
-export default function ClientesBody() {
-  const [clientes, setClientes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editingClient, setEditingClient] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+const CRUDComponent = () => {
+  const [data, setData] = useState([
+    { id: 1, name: "John Doe", email: "john@example.com", role: "Developer", status: "Active" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Designer", status: "Inactive" },
+    { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "Manager", status: "Active" }
+  ]);
 
-  // Formulario para nuevo cliente
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-  });
+  const [columns, setColumns] = useState([
+    { key: "name", label: "Name", editable: true },
+    { key: "email", label: "Email", editable: true },
+    { key: "role", label: "Role", editable: true },
+    { key: "status", label: "Status", editable: true }
+  ]);
 
-  useEffect(() => {
-    fetchClientes();
-  }, []);
+  const [editingItem, setEditingItem] = useState(null);
+  const [newItem, setNewItem] = useState({});
+  const [isAdding, setIsAdding] = useState(false);
+  const [newColumn, setNewColumn] = useState({ key: "", label: "", editable: true });
 
-  const fetchClientes = async () => {
-    try {
-      setLoading(true);
-      const params = searchTerm ? { search: searchTerm } : {};
-      const response = await customerAPI.getAll(params);
-      setClientes(response.data.results || response.data);
-      setError(null);
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      setError(errorInfo.message);
-    } finally {
-      setLoading(false);
+  const handleEdit = (item) => {
+    setEditingItem({ ...item });
+  };
+
+  const handleUpdate = () => {
+    setData(data.map((item) => (item.id === editingItem.id ? editingItem : item)));
+    setEditingItem(null);
+  };
+
+  const handleDelete = (id) => {
+    setData(data.filter((item) => item.id !== id));
+  };
+
+  const handleAdd = () => {
+    const newId = Math.max(...data.map((item) => item.id)) + 1;
+    setData([...data, { id: newId, ...newItem }]);
+    setIsAdding(false);
+    setNewItem({});
+  };
+
+  const handleAddColumn = () => {
+    if (newColumn.key && newColumn.label) {
+      setColumns([...columns, newColumn]);
+      setNewColumn({ key: "", label: "", editable: true });
     }
   };
 
-  // Manejador cambio inputs
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleRemoveColumn = (key) => {
+    setColumns(columns.filter((col) => col.key !== key));
   };
-
-  // Resetear formulario
-  const resetForm = () => {
-    setFormData({ name: '', email: '', phone: '' });
-    setEditingClient(null);
-  };
-
-  // Crear o actualizar cliente
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingClient) {
-        await customerAPI.partialUpdate(editingClient.id, formData);
-      } else {
-        await customerAPI.create(formData);
-      }
-      resetForm();
-      fetchClientes();
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      alert(errorInfo.message);
-    }
-  };
-
-  // Editar cliente
-  const handleEdit = (cliente) => {
-    setFormData({
-      name: cliente.name,
-      email: cliente.email,
-      phone: cliente.phone || '',
-    });
-    setEditingClient(cliente);
-  };
-
-  // Eliminar cliente
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este cliente?')) {
-      try {
-        await customerAPI.delete(id);
-        fetchClientes();
-      } catch (err) {
-        const errorInfo = handleAPIError(err);
-        alert(errorInfo.message);
-      }
-    }
-  };
-
-  // Exportar CSV
-  const handleExportCSV = async () => {
-    try {
-      const response = await customerAPI.exportCSV();
-      downloadFile(response.data, 'clientes.csv');
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      alert(errorInfo.message);
-    }
-  };
-
-  if (loading) return <p className="p-6">Cargando clientes...</p>;
-  if (error) return <p className="p-6 text-red-600">{error}</p>;
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Gestión de Clientes</h1>
-        <button 
-          onClick={handleExportCSV}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+    <div className="p-6 max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold text-gray-800">Dataset Management</h2>
+        <button
+          onClick={() => setIsAdding(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+          aria-label="Add new item"
         >
-          Exportar CSV
+          <FiPlus /> Add New
         </button>
       </div>
 
-      {/* Búsqueda */}
-      <div className="mb-6 p-4 border rounded shadow bg-gray-50">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Buscar clientes por nombre o email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <button 
-            onClick={fetchClientes}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Buscar
-          </button>
-          <button 
-            onClick={() => {
-              setSearchTerm('');
-              fetchClientes();
-            }}
-            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-          >
-            Limpiar
-          </button>
+      <div className="mb-6 p-4 border rounded-md bg-gray-50">
+        <h3 className="text-lg font-semibold mb-4">Manage Columns</h3>
+        <div className="flex flex-wrap gap-4">
+          {columns.map((col) => (
+            <div key={col.key} className="flex items-center gap-2 bg-white p-2 rounded-md shadow-sm">
+              <span>{col.label}</span>
+              <button
+                onClick={() => handleRemoveColumn(col.key)}
+                className="text-red-500 hover:text-red-700"
+                aria-label={`Remove ${col.label} column`}
+              >
+                <FiX />
+              </button>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Key"
+              className="px-3 py-1 border rounded-md"
+              value={newColumn.key}
+              onChange={(e) => setNewColumn({ ...newColumn, key: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Label"
+              className="px-3 py-1 border rounded-md"
+              value={newColumn.label}
+              onChange={(e) => setNewColumn({ ...newColumn, label: e.target.value })}
+            />
+            <button
+              onClick={handleAddColumn}
+              className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              aria-label="Add new column"
+            >
+              Add
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Formulario */}
-      <form onSubmit={handleSubmit} className="mb-8 max-w-md border p-4 rounded shadow">
-        <h2 className="text-xl mb-4 font-semibold">
-          {editingClient ? 'Editar Cliente' : 'Nuevo Cliente'}
-        </h2>
-
-        <input
-          type="text"
-          name="name"
-          placeholder="Nombre completo"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Teléfono"
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-        />
-
-        <div className="flex gap-2">
-          <button type="submit" className="bg-pink-600 text-white py-2 px-4 rounded hover:bg-pink-700">
-            {editingClient ? 'Actualizar' : 'Crear'} Cliente
-          </button>
-          {editingClient && (
-            <button 
-              type="button"
-              onClick={resetForm}
-              className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
-
-      {/* Lista de clientes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clientes.map(cliente => (
-          <div key={cliente.id} className="border p-4 rounded shadow">
-            <h3 className="text-lg font-semibold mb-2">{cliente.name}</h3>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Email:</span> {cliente.email}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Teléfono:</span> {cliente.phone || 'No especificado'}
-            </p>
-            <p className="text-gray-500 text-sm mb-4">
-              <span className="font-medium">Registrado:</span> {new Date(cliente.created_at).toLocaleDateString()}
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(cliente)}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse" role="grid">
+          <thead>
+            <tr className="bg-gray-100">
+              {columns.map((col) => (
+                <th key={col.key} className="p-3 text-left font-semibold text-gray-600">
+                  {col.label}
+                </th>
+              ))}
+              <th className="p-3 text-left font-semibold text-gray-600">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr
+                key={item.id}
+                className="border-t hover:bg-gray-50 transition-colors"
+                role="row"
               >
-                Editar
+                {columns.map((col) => (
+                  <td key={`${item.id}-${col.key}`} className="p-3">
+                    {editingItem?.id === item.id ? (
+                      <input
+                        type="text"
+                        className="w-full px-2 py-1 border rounded"
+                        value={editingItem[col.key] || ""}
+                        onChange={(e) =>
+                          setEditingItem({ ...editingItem, [col.key]: e.target.value })
+                        }
+                      />
+                    ) : (
+                      item[col.key]
+                    )}
+                  </td>
+                ))}
+                <td className="p-3">
+                  <div className="flex gap-2">
+                    {editingItem?.id === item.id ? (
+                      <>
+                        <button
+                          onClick={handleUpdate}
+                          className="p-2 text-green-500 hover:text-green-700"
+                          aria-label="Save changes"
+                        >
+                          <FiCheck />
+                        </button>
+                        <button
+                          onClick={() => setEditingItem(null)}
+                          className="p-2 text-gray-500 hover:text-gray-700"
+                          aria-label="Cancel editing"
+                        >
+                          <FiX />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="p-2 text-blue-500 hover:text-blue-700"
+                          aria-label="Edit item"
+                        >
+                          <FiEdit2 />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="p-2 text-red-500 hover:text-red-700"
+                          aria-label="Delete item"
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {isAdding && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">Add New Item</h3>
+            {columns.map((col) => (
+              <div key={col.key} className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">{col.label}</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={newItem[col.key] || ""}
+                  onChange={(e) => setNewItem({ ...newItem, [col.key]: e.target.value })}
+                />
+              </div>
+            ))}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsAdding(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
               </button>
               <button
-                onClick={() => handleDelete(cliente.id)}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+                onClick={handleAdd}
+                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
               >
-                Eliminar
+                Add
               </button>
             </div>
           </div>
-        ))}
-      </div>
-
-      {clientes.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          No hay clientes registrados.
         </div>
       )}
     </div>
   );
-}
+};
+
+export default CRUDComponent;

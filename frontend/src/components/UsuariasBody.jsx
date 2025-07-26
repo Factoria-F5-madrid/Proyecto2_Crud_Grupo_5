@@ -1,448 +1,233 @@
-import { useState, useEffect } from 'react';
-import { usuariaAPI, handleAPIError, downloadFile } from '../services/api';
+import { useState } from "react";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function UsuariasBody() {
-  const [usuarias, setUsuarias] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editingUsuaria, setEditingUsuaria] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+const CRUDTable = () => {
+  const [data, setData] = useState([
+    { id: 1, name: "John Doe", email: "john@example.com", role: "Developer", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Designer", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330" },
+    { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "Manager", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e" },
+  ]);
 
-  // Formulario para nueva usuaria
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    first_name: '',
-    last_name: '',
-    phone: '',
-    role: 'EMPLOYEE',
-    status: 'ACTIVE',
-    avatar: null,
-    hire_date: '',
-    salary: '',
-    address: '',
-    password: '',
-    password_confirm: '',
+    name: "",
+    email: "",
+    role: "",
+    image: ""
   });
 
-  useEffect(() => {
-    fetchUsuarias();
-  }, []);
+  const [editingId, setEditingId] = useState(null);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
-  const fetchUsuarias = async () => {
-    try {
-      setLoading(true);
-      const params = searchTerm ? { search: searchTerm } : {};
-      const response = await usuariaAPI.getAll(params);
-      setUsuarias(response.data.results || response.data);
-      setError(null);
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      setError(errorInfo.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  // Manejador cambio inputs
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'avatar') {
-      setFormData(prev => ({ ...prev, [name]: files[0] || null }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
-  };
-
-  // Resetear formulario
-  const resetForm = () => {
-    setFormData({
-      username: '',
-      email: '',
-      first_name: '',
-      last_name: '',
-      phone: '',
-      role: 'EMPLOYEE',
-      status: 'ACTIVE',
-      avatar: null,
-      hire_date: '',
-      salary: '',
-      address: '',
-      password: '',
-      password_confirm: '',
-    });
-    setEditingUsuaria(null);
-    // Limpiar el input de archivo
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) fileInput.value = '';
-  };
-
-  // Crear o actualizar usuaria
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Log de debug para ver qué datos se están enviando
-    console.log('Datos del formulario a enviar:', formData);
-    
-    try {
-      if (editingUsuaria) {
-        await usuariaAPI.partialUpdate(editingUsuaria.id, formData);
-      } else {
-        await usuariaAPI.create(formData);
-      }
-      resetForm();
-      fetchUsuarias();
-    } catch (err) {
-      // Log detallado del error
-      console.error('Error completo:', err);
-      console.error('Response data:', err.response?.data);
-      console.error('Response status:', err.response?.status);
-      
-      const errorInfo = handleAPIError(err);
-      
-      // Mostrar más detalles del error
-      let errorMessage = errorInfo.message;
-      if (err.response?.data) {
-        errorMessage += '\nDetalles: ' + JSON.stringify(err.response.data, null, 2);
-      }
-      
-      alert(errorMessage);
+    if (editingId) {
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === editingId ? { ...item, ...formData } : item
+        )
+      );
+      toast.success("Entry updated successfully!");
+    } else {
+      const newEntry = {
+        id: Date.now(),
+        ...formData,
+      };
+      setData((prev) => [...prev, newEntry]);
+      toast.success("Entry added successfully!");
     }
+    resetForm();
   };
 
-  // Editar usuaria
-  const handleEdit = (usuaria) => {
+  const handleEdit = (item) => {
     setFormData({
-      username: usuaria.username,
-      email: usuaria.email,
-      first_name: usuaria.first_name,
-      last_name: usuaria.last_name,
-      phone: usuaria.phone || '',
-      role: usuaria.role,
-      status: usuaria.status,
-      avatar: null, // No pre-cargar foto existente
-      hire_date: usuaria.hire_date || '',
-      salary: usuaria.salary || '',
-      address: usuaria.address || '',
-      password: '', // No pre-cargar contraseña
-      password_confirm: '', // No pre-cargar confirmación
+      name: item.name,
+      email: item.email,
+      role: item.role,
+      image: item.image
     });
-    setEditingUsuaria(usuaria);
+    setEditingId(item.id);
+    setIsFormVisible(true);
   };
 
-  // Eliminar usuaria
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar esta usuaria?')) {
-      try {
-        await usuariaAPI.delete(id);
-        fetchUsuarias();
-      } catch (err) {
-        const errorInfo = handleAPIError(err);
-        alert(errorInfo.message);
-      }
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this entry?")) {
+      setData((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Entry deleted successfully!");
     }
   };
 
-  // Reactivar usuaria (si estaba desactivada)
-  const handleReactivate = async (id) => {
-    try {
-      await usuariaAPI.reactivate(id);
-      fetchUsuarias();
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      alert(errorInfo.message);
-    }
+  const resetForm = () => {
+    setFormData({ name: "", email: "", role: "", image: "" });
+    setEditingId(null);
+    setIsFormVisible(false);
   };
-
-  const handleExportCSV = async () => {
-    try {
-      const response = await usuariaAPI.exportCSV();
-      downloadFile(response.data, 'usuarias.csv');
-    } catch (err) {
-      const errorInfo = handleAPIError(err);
-      alert(errorInfo.message);
-    }
-  };
-
-  if (loading) return <p className="p-6">Cargando usuarias...</p>;
-  if (error) return <p className="p-6 text-red-600">{error}</p>;
 
   return (
-    <div className="p-6">
+    <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Gestión de Usuarias</h1>
-        <button 
-          onClick={handleExportCSV}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        <h1 className="text-2xl font-bold text-gray-800">Employee Management</h1>
+        <button
+          onClick={() => setIsFormVisible(!isFormVisible)}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition duration-300"
         >
-          Exportar CSV
+          <FaPlus /> {isFormVisible ? "Hide Form" : "Add New"}
         </button>
       </div>
 
-      {/* Búsqueda */}
-      <div className="mb-6 p-4 border rounded shadow bg-gray-50">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Buscar usuarias por nombre o email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <button 
-            onClick={fetchUsuarias}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Buscar
-          </button>
-          <button 
-            onClick={() => {
-              setSearchTerm('');
-              fetchUsuarias();
-            }}
-            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-          >
-            Limpiar
-          </button>
-        </div>
-      </div>
-
-      {/* Formulario */}
-      <form onSubmit={handleSubmit} className="mb-8 max-w-md border p-4 rounded shadow">
-        <h2 className="text-xl mb-4 font-semibold">
-          {editingUsuaria ? 'Editar Usuaria' : 'Nueva Usuaria'}
-        </h2>
-
-        <input
-          type="text"
-          name="username"
-          placeholder="Nombre de usuario"
-          value={formData.username}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="text"
-          name="first_name"
-          placeholder="Nombre"
-          value={formData.first_name}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="text"
-          name="last_name"
-          placeholder="Apellido"
-          value={formData.last_name}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Teléfono (+999999999)"
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
+      {isFormVisible && (
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-6 rounded-lg shadow-md mb-6"
         >
-          <option value="EMPLOYEE">Empleada</option>
-          <option value="ADMIN">Administradora</option>
-          <option value="MANAGER">Gerente</option>
-        </select>
-
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          required
-          className="w-full mb-2 p-2 border rounded"
-        >
-          <option value="ACTIVE">Activa</option>
-          <option value="INACTIVE">Inactiva</option>
-          <option value="SUSPENDED">Suspendida</option>
-        </select>
-
-        <input
-          type="date"
-          name="hire_date"
-          placeholder="Fecha de contratación"
-          value={formData.hire_date}
-          onChange={handleChange}
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <input
-          type="number"
-          name="salary"
-          placeholder="Salario"
-          value={formData.salary}
-          onChange={handleChange}
-          min="0"
-          step="0.01"
-          className="w-full mb-2 p-2 border rounded"
-        />
-
-        <textarea
-          name="address"
-          placeholder="Dirección"
-          value={formData.address}
-          onChange={handleChange}
-          rows="2"
-          className="w-full mb-2 p-2 border rounded"
-        ></textarea>
-
-        <input
-          type="file"
-          name="avatar"
-          accept="image/*"
-          onChange={handleChange}
-          className="w-full mb-2 p-2 border rounded"
-        />
-        {formData.avatar && (
-          <p className="text-sm text-gray-600 mb-2">Archivo seleccionado: {formData.avatar.name}</p>
-        )}
-
-        {!editingUsuaria && (
-          <>
-            <input
-              type="password"
-              name="password"
-              placeholder="Contraseña (mínimo 8 caracteres)"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              minLength="8"
-              className="w-full mb-2 p-2 border rounded"
-            />
-
-            <input
-              type="password"
-              name="password_confirm"
-              placeholder="Confirmar contraseña"
-              value={formData.password_confirm}
-              onChange={handleChange}
-              required
-              minLength="8"
-              className="w-full mb-4 p-2 border rounded"
-            />
-          </>
-        )}
-
-        <div className="flex gap-2">
-          <button type="submit" className="bg-pink-600 text-white py-2 px-4 rounded hover:bg-pink-700">
-            {editingUsuaria ? 'Actualizar' : 'Crear'} Usuaria
-          </button>
-          {editingUsuaria && (
-            <button 
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-2">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Role</label>
+              <input
+                type="text"
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Image URL</label>
+              <input
+                type="url"
+                name="image"
+                value={formData.image}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
               type="button"
               onClick={resetForm}
-              className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition duration-300"
             >
-              Cancelar
+              Cancel
             </button>
-          )}
-        </div>
-      </form>
-
-      {/* Lista de usuarias */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {usuarias.map((usuaria) => (
-          <div key={usuaria.id} className="border p-4 rounded shadow">
-            {usuaria.avatar_url && (
-              <img 
-                src={usuaria.avatar_url} 
-                alt={usuaria.full_name || `${usuaria.first_name} ${usuaria.last_name}`}
-                className="w-16 h-16 rounded-full mx-auto mb-2 object-cover"
-              />
-            )}
-            <h3 className="text-lg font-semibold mb-2 text-center">
-              {usuaria.full_name || `${usuaria.first_name} ${usuaria.last_name}`}
-            </h3>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Usuario:</span> {usuaria.username}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Email:</span> {usuaria.email}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Teléfono:</span> {usuaria.phone || 'No especificado'}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Rol:</span> {usuaria.role_display || usuaria.role}
-            </p>
-            <p className="text-gray-600 mb-1">
-              <span className="font-medium">Estado:</span> {usuaria.status}
-            </p>
-            {usuaria.hire_date && (
-              <p className="text-gray-600 mb-1">
-                <span className="font-medium">Contratación:</span> {new Date(usuaria.hire_date).toLocaleDateString()}
-              </p>
-            )}
-            {usuaria.address && (
-              <p className="text-gray-600 mb-1">
-                <span className="font-medium">Dirección:</span> {usuaria.address}
-              </p>
-            )}
-            <p className="text-gray-500 text-sm mb-4">
-              <span className="font-medium">Registrada:</span> {new Date(usuaria.created_at).toLocaleDateString()}
-            </p>
-            
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(usuaria)}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => handleDelete(usuaria.id)}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-              >
-                Eliminar
-              </button>
-            </div>
-            
-            {usuaria.is_active === false && (
-              <button
-                onClick={() => handleReactivate(usuaria.id)}
-                className="w-full mt-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
-              >
-                Reactivar
-              </button>
-            )}
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300"
+            >
+              {editingId ? "Update" : "Submit"}
+            </button>
           </div>
-        ))}
-      </div>
-
-      {usuarias.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          No hay usuarias registradas.
-        </div>
+        </form>
       )}
+
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Image
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {data.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e";
+                      }}
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {item.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {item.role}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="text-blue-600 hover:text-blue-900 mr-4"
+                      aria-label="Edit entry"
+                    >
+                      <FaEdit className="text-xl" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="text-red-600 hover:text-red-900"
+                      aria-label="Delete entry"
+                    >
+                      <FaTrash className="text-xl" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <ToastContainer position="bottom-right" />
     </div>
   );
-}
+};
+
+export default CRUDTable;

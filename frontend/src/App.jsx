@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Dashboard from '@/pages/Dashboard.jsx';
-import Prendas from '@/pages/Prendas';
-import Clientes from '@/pages/Clientes';
-import Usuarias from '@/pages/Usuarias';
-import Categorias from '@/pages/Categorias';
-import Ventas from '@/pages/Ventas';
+import Prendas from '@/pages/Prendas.jsx';
+import Clientes from '@/pages/Clientes.jsx';
+import Usuarias from '@/pages/Usuarias.jsx';
+import Ventas from '@/pages/Ventas.jsx';
 
 function App() {
   return (
@@ -14,7 +13,6 @@ function App() {
         <Route path="/prendas" element={<Prendas />} />
         <Route path="/clientes" element={<Clientes />} />
         <Route path="/usuarias" element={<Usuarias />} />
-        <Route path="/categorias" element={<Categorias />} />
         <Route path="/ventas" element={<Ventas />} />
 
       </Routes>
