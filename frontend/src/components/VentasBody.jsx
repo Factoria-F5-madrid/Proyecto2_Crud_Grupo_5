@@ -34,7 +34,7 @@ const CRUDApp = () => {
           <h1 className="text-xl font-semibold text-gray-900">Ventas</h1>
           <button
             onClick={handleAdd}
-            className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+            className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-200 transition-colors duration-200"
           >
             <FaPlus className="mr-2" />
             Add New Product
@@ -63,7 +63,7 @@ const CRUDApp = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                       <button
                         onClick={() => handleUpdate(item.id)}
-                        className="inline-flex items-center px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
+                        className="inline-flex items-center px-3 py-1 bg-orange-500 text-white rounded-md hover:bg-orange-200 transition-colors duration-200"
                       >
                         <FaEdit className="mr-1" />
                         Edit

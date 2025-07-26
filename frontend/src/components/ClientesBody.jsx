@@ -57,7 +57,7 @@ const CRUDComponent = () => {
         <h2 className="text-2xl font-bold text-gray-800">Clientes</h2>
         <button
           onClick={() => setIsAdding(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-200 transition-colors"
           aria-label="Add new item"
         >
           <FiPlus /> Add New
@@ -96,7 +96,7 @@ const CRUDComponent = () => {
             />
             <button
               onClick={handleAddColumn}
-              className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              className="px-3 py-1 bg-orange-500 text-white rounded-md hover:text-orange-200"
               aria-label="Add new column"
             >
               Add
@@ -146,7 +146,7 @@ const CRUDComponent = () => {
                       <>
                         <button
                           onClick={handleUpdate}
-                          className="p-2 text-green-500 hover:text-green-700"
+                          className="p-2 text-orange-500 hover:text-orange-600"
                           aria-label="Save changes"
                         >
                           <FiCheck />
@@ -163,7 +163,7 @@ const CRUDComponent = () => {
                       <>
                         <button
                           onClick={() => handleEdit(item)}
-                          className="p-2 text-blue-500 hover:text-blue-700"
+                          className="p-2 text-orange-500 hover:text-orange-200"
                           aria-label="Edit item"
                         >
                           <FiEdit2 />

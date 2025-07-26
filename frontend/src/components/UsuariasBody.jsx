@@ -78,7 +78,7 @@ const CRUDTable = () => {
         <h1 className="text-2xl font-bold text-gray-800">Usuarias</h1>
         <button
           onClick={() => setIsFormVisible(!isFormVisible)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition duration-300"
+          className="bg-[#F28D35] hover:bg-[#3D2C4E] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition duration-300"
         >
           <FaPlus /> {isFormVisible ? "Hide Form" : "Add New"}
         </button>
@@ -206,7 +206,7 @@ const CRUDTable = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
                       onClick={() => handleEdit(item)}
-                      className="text-blue-600 hover:text-blue-900 mr-4"
+                      className="text-orange-500 hover:text-orange-600 mr-4"
                       aria-label="Edit entry"
                     >
                       <FaEdit className="text-xl" />
