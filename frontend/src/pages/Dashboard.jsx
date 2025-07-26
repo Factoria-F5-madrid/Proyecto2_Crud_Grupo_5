@@ -3,7 +3,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import logoTexto from '@/assets/FÉNIX.png';
 import logoCirculo from '@/assets/fenix_logo_2.png';
-import fondo from '@/assets/screen.jpg'
+import fondo from '@/assets/fondoo.png'
 import { Link } from 'react-router-dom';
 
 
@@ -30,7 +30,7 @@ const ResponsiveSidebar = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[gray-100]">
+    <div className="flex h-screen bg-gray-100 overflow-hidden h-screen">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -95,13 +95,6 @@ const ResponsiveSidebar = () => {
           backgroundSize: "cover",
           backgroundPosition: "center"
           }}>
-          <h2 className="mb-4 text-xl font-semibold">Content</h2>
-          <p className="mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
         </main>
       </div>
     </div>

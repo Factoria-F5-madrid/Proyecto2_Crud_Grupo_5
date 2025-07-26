@@ -30,7 +30,7 @@ const ResponsiveSidebar = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 overflow-hidden h-screen">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
