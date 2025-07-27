@@ -38,7 +38,7 @@ const ResponsiveSidebar = () => {
             animate={{ x: 0 }}
             exit={{ x: -300 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg md:relative md:translate-x-0"
+            className="fixed inset-y-0 left-0 z-30 w-64 bg-[#EBEBEB]  shadow-lg md:relative md:translate-x-0"
           >
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-xl font-semibold">Menú</h2>
@@ -74,7 +74,7 @@ const ResponsiveSidebar = () => {
       </AnimatePresence>
 
       <div className="flex flex-col flex-1 overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
+        <header className="flex items-center justify-between px-6 py-4 bg-[#EBEBEB]border-b">
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-md md:hidden hover:bg-gray-200"

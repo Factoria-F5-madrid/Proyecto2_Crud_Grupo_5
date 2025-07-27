@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit2, FiTrash2, FiPlus, FiX, FiCheck, FiFilter, FiSearch } from "react-icons/fi";
 import { BsArrowUp, BsArrowDown } from "react-icons/bs";
+import { productAPI, categoryAPI, handleAPIError } from '../services/api';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CRUDApplication = () => {
-  const [items, setItems] = useState([
-    { id: 1, name: "Product A", category: "Electronics", price: 299.99, status: "In Stock", image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147" },
-    { id: 2, name: "Product B", category: "Clothing", price: 49.99, status: "Out of Stock", image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105" },
-  ]);
+  const [items, setItems] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
     category: "",
     price: "",
-    status: "",
+    stock: "",
+    size: "",
+    color: "",
+    description: "",
     image: null
   });
+  
+  const [categories, setCategories] = useState([]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -26,6 +31,35 @@ const CRUDApplication = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setIsLoading(true);
+      const response = await productAPI.getAll();
+      setItems(response.data.results || response.data);
+    } catch (error) {
+      const errorInfo = handleAPIError(error);
+      toast.error(`Error al cargar productos: ${errorInfo.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await categoryAPI.getAll();
+      setCategories(response.data.results || response.data);
+    } catch (error) {
+      const errorInfo = handleAPIError(error);
+      toast.error(`Error al cargar categorías: ${errorInfo.message}`);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData(prev => ({
@@ -34,30 +68,41 @@ const CRUDApplication = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     
-    setTimeout(() => {
+    try {
       if (isEditing) {
-        setItems(prev => prev.map(item => 
-          item.id === editingId ? { ...formData, id: editingId } : item
-        ));
+        const response = await productAPI.update(editingId, formData);
+        toast.success('Producto actualizado exitosamente');
         setIsEditing(false);
         setEditingId(null);
       } else {
-        setItems(prev => [...prev, { ...formData, id: Date.now() }]);
+        const response = await productAPI.create(formData);
+        toast.success('Producto creado exitosamente');
       }
       
+      // Resetear formulario
       setFormData({
         name: "",
         category: "",
         price: "",
-        status: "",
+        stock: "",
+        size: "",
+        color: "",
+        description: "",
         image: null
       });
+      
+      // Recargar productos
+      await fetchProducts();
+    } catch (error) {
+      const errorInfo = handleAPIError(error);
+      toast.error(`Error al ${isEditing ? 'actualizar' : 'crear'} producto: ${errorInfo.message}`);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleEdit = (item) => {
@@ -71,10 +116,17 @@ const CRUDApplication = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    setItems(prev => prev.filter(item => item.id !== deleteId));
-    setShowDeleteModal(false);
-    setDeleteId(null);
+  const confirmDelete = async () => {
+    try {
+      await productAPI.delete(deleteId);
+      toast.success('Producto eliminado exitosamente');
+      setShowDeleteModal(false);
+      setDeleteId(null);
+      await fetchProducts();
+    } catch (error) {
+      const errorInfo = handleAPIError(error);
+      toast.error(`Error al eliminar producto: ${errorInfo.message}`);
+    }
   };
 
   const handleSort = (field) => {
@@ -125,7 +177,7 @@ const CRUDApplication = () => {
               </div>
 
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoría</label>
                 <select
                   id="category"
                   name="category"
@@ -134,17 +186,18 @@ const CRUDApplication = () => {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   required
                 >
-                  <option value="">Select Category</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Clothing">Clothing</option>
-                  <option value="Books">Books</option>
+                  <option value="">Seleccionar Categoría</option>
+                  {categories.map(category => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                  ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700">Precio</label>
                 <input
                   type="number"
+                  step="0.01"
                   id="price"
                   name="price"
                   value={formData.price}
@@ -155,35 +208,57 @@ const CRUDApplication = () => {
               </div>
 
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-                <div className="mt-2 space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="In Stock"
-                      checked={formData.status === "In Stock"}
-                      onChange={handleInputChange}
-                      className="form-radio text-indigo-600"
-                    />
-                    <span className="ml-2">In Stock</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="Out of Stock"
-                      checked={formData.status === "Out of Stock"}
-                      onChange={handleInputChange}
-                      className="form-radio text-indigo-600"
-                    />
-                    <span className="ml-2">Out of Stock</span>
-                  </label>
-                </div>
+                <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Stock</label>
+                <input
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  required
+                />
               </div>
 
               <div>
-                <label htmlFor="image" className="block text-sm font-medium text-gray-700">Image</label>
+                <label htmlFor="size" className="block text-sm font-medium text-gray-700">Talla</label>
+                <input
+                  type="text"
+                  id="size"
+                  name="size"
+                  value={formData.size}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="color" className="block text-sm font-medium text-gray-700">Color</label>
+                <input
+                  type="text"
+                  id="color"
+                  name="color"
+                  value={formData.color}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descripción</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="3"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  placeholder="Descripción del producto..."
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label htmlFor="image" className="block text-sm font-medium text-gray-700">Imagen</label>
                 <input
                   type="file"
                   id="image"
@@ -211,7 +286,10 @@ const CRUDApplication = () => {
                       name: "",
                       category: "",
                       price: "",
-                      status: "",
+                      stock: "",
+                      size: "",
+                      color: "",
+                      description: "",
                       image: null
                     });
                   }}
@@ -266,46 +344,61 @@ const CRUDApplication = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAndSortedItems.map((item) => (
-              <div key={item.id} className="bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-48 object-cover"
-                  onError={(e) => {
-                    e.target.src = "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
-                  }}
-                />
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                  <p className="text-gray-600 mb-2">Category: {item.category}</p>
-                  <p className="text-gray-600 mb-2">Price: ${item.price}</p>
-                  <p className="mb-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.status === "In Stock" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                      {item.status}
-                    </span>
-                  </p>
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={() => handleEdit(item)}
-                      className="p-2 text-orange-600 hover:bg-blue-50 rounded-full"
-                      aria-label="Edit item"
-                    >
-                      <FiEdit2 className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-full"
-                      aria-label="Delete item"
-                    >
-                      <FiTrash2 className="w-5 h-5" />
-                    </button>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAndSortedItems.map((item) => {
+                const categoryName = categories.find(cat => cat.id === item.category)?.name || 'Sin categoría';
+                const imageUrl = item.image ? (item.image.startsWith('http') ? item.image : `http://localhost:8000${item.image}`) : "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
+                
+                return (
+                  <div key={item.id} className="bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <img
+                      src={imageUrl}
+                      alt={item.name}
+                      className="w-full h-48 object-cover"
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
+                      }}
+                    />
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
+                      <p className="text-gray-600 mb-1">Categoría: {categoryName}</p>
+                      <p className="text-gray-600 mb-1">Precio: ${item.price}</p>
+                      <p className="text-gray-600 mb-1">Stock: {item.stock}</p>
+                      {item.size && <p className="text-gray-600 mb-1">Talla: {item.size}</p>}
+                      {item.color && <p className="text-gray-600 mb-1">Color: {item.color}</p>}
+                      {item.description && <p className="text-gray-500 text-sm mb-2">{item.description}</p>}
+                      <p className="mb-4">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                          {item.stock > 0 ? "En Stock" : "Sin Stock"}
+                        </span>
+                      </p>
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="p-2 text-orange-600 hover:bg-blue-50 rounded-full"
+                          aria-label="Edit item"
+                        >
+                          <FiEdit2 className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-full"
+                          aria-label="Delete item"
+                        >
+                          <FiTrash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -332,6 +425,7 @@ const CRUDApplication = () => {
           </div>
         </div>
       )}
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };

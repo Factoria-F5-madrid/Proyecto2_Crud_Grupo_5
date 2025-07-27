@@ -103,9 +103,10 @@ class UsuariaCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         min_length=8,
-        help_text="Contraseña mínima de 8 caracteres"
+        required=False,
+        help_text="Contraseña mínima de 8 caracteres (opcional)"
     )
-    password_confirm = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True, required=False)
     
     class Meta:
         model = Usuaria
@@ -119,14 +120,16 @@ class UsuariaCreateSerializer(serializers.ModelSerializer):
         }
     
     def validate(self, attrs):
-        """Validar que las contraseñas coincidan"""
+        """Validar que las contraseñas coincidan si se proporcionan"""
         password = attrs.get('password')
         password_confirm = attrs.pop('password_confirm', None)
         
-        if password != password_confirm:
-            raise serializers.ValidationError(
-                "Las contraseñas no coinciden."
-            )
+        # Solo validar contraseñas si se proporcionan
+        if password or password_confirm:
+            if password != password_confirm:
+                raise serializers.ValidationError(
+                    "Las contraseñas no coinciden."
+                )
         
         return attrs
     

@@ -26,28 +26,43 @@ class UsuariaFilter(django_filters.FilterSet):
 
 class UsuariaListCreateAPIView(generics.ListCreateAPIView):
     """
-    Vista para listar todas las usuarias o crear una nueva.
-    - GET /api/usuarias/ (Lista todas las usuarias con filtros)
+    Vista para listar todas las usuarias activas o crear una nueva.
+    - GET /api/usuarias/ (Lista todas las usuarias activas con filtros)
     - POST /api/usuarias/ (Crea una nueva usuaria con avatar)
+    
+    Por defecto solo muestra usuarias activas (is_active=True).
+    Para ver todas incluyendo inactivas, usar: ?show_all=true
     
     Filtros disponibles:
     - ?search=nombre (busca en nombre, apellido, username, email)
     - ?role=ADMIN (filtra por rol: ADMIN, EMPLOYEE, MANAGER)
     - ?status=ACTIVE (filtra por estado: ACTIVE, INACTIVE, SUSPENDED)
     - ?is_active=true (filtra por activas/inactivas)
+    - ?show_all=true (incluye usuarias inactivas)
     - ?hire_date_from=2023-01-01&hire_date_to=2023-12-31 (rango de fechas contratación)
     - ?salary_min=1000&salary_max=5000 (rango salarial)
     - ?ordering=first_name,-created_at (ordena por campos)
     
     Para subir avatar: usar Content-Type: multipart/form-data
     """
-    queryset = Usuaria.objects.all()
+    queryset = Usuaria.objects.filter(is_active=True)
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = UsuariaFilter
     search_fields = ['first_name', 'last_name', 'username', 'email']
     ordering_fields = ['first_name', 'last_name', 'username', 'created_at', 'hire_date']
     ordering = ['-created_at']
+    
+    def get_queryset(self):
+        """Override queryset to handle show_all parameter"""
+        queryset = Usuaria.objects.all()
+        
+        # Por defecto, solo mostrar usuarias activas
+        show_all = self.request.query_params.get('show_all', 'false').lower()
+        if show_all != 'true':
+            queryset = queryset.filter(is_active=True)
+            
+        return queryset
     
     def get_serializer_class(self):
         """Use different serializers for list vs create"""

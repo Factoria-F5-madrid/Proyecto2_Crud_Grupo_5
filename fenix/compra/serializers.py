@@ -50,7 +50,8 @@ class NestedOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         # No incluimos 'order' aquí porque se infiere de la relación con el Order padre.
-        fields = ['id', 'product', 'product_name', 'quantity']
+        # Incluimos 'price' para que se pueda establecer el precio unitario
+        fields = ['id', 'product', 'product_name', 'quantity', 'price']
         read_only_fields = ('id', 'product_name',) # 'id' es autogenerado, 'product_name' es solo para lectura
 
 
@@ -67,9 +68,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        # Incluye 'items' y 'customer_name' en los campos que se serializarán.
-        fields = ['id', 'customer', 'customer_name', 'order_date', 'items']
-        read_only_fields = ('id', 'order_date', 'customer_name',)
+        # Incluye 'items', 'customer_name' y 'total_amount' en los campos que se serializarán.
+        fields = ['id', 'customer', 'customer_name', 'order_date', 'total_amount', 'status', 'items']
+        read_only_fields = ('id', 'order_date', 'customer_name', 'total_amount',)
 
     # --- Método CREATE personalizado para manejar la creación de OrderItems anidados ---
     def create(self, validated_data):
