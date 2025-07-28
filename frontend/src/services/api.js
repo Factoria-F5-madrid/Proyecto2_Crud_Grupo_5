@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuración base de axios
 const api = axios.create({
-  baseURL: 'https://fenix-pbad.onrender.com/api',
+  baseURL: 'https://fenix-pbad.onrender.com',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
