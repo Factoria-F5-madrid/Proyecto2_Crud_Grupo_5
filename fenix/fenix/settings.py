@@ -16,11 +16,11 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fenix-backend.onrender.com',
-                 'fenix-pbad.onrender.com']
+ALLOWED_HOSTS = [,'fenix-pbad.onrender.com/api']
 CORS_ALLOWED_ORIGINS = [
     "https://proyecto2-crud-grupo-5-git-main-johiortizs-projects.vercel.app",
     "https://fenix-crud-app.vercel.app",
+    "https://fenix-crud.onrender.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:8080",
