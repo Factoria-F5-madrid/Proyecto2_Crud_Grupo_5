@@ -16,8 +16,10 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['fenix-backend.onrender.com']
+CORS_ALLOWED_ORIGINS = [
+    "fenix-appvercel.app"
+]
 
 # Application definition
 
