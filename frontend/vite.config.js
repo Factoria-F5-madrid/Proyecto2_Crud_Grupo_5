@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:8000'
+      '/api': 'https://fenix-pbad.onrender.com/api'
     }
   },
   // Añade esta sección para resolver las rutas con @
