@@ -16,7 +16,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fenix-pbad.onrender.com/api']
+ALLOWED_HOSTS = ['fenix-pbad.onrender.com/api',
+                 'fenix-pbad.onrender.com']
 
 CORS_ALLOWED_ORIGINS = [
     "https://proyecto2-crud-grupo-5-git-main-johiortizs-projects.vercel.app",
