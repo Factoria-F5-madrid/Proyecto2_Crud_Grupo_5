@@ -20,14 +20,17 @@ ALLOWED_HOSTS = ['fenix-backend.onrender.com',
                  'fenix-pbad.onrender.com']
 CORS_ALLOWED_ORIGINS = [
     "https://proyecto2-crud-grupo-5-git-main-johiortizs-projects.vercel.app",
-    "https://fenix-crud-app.vercel.app/",
-    "https://fenix-crud-app.vercel.app/usuarias",
-    "https://fenix-crud-app.vercel.app/clientes",
-    "https://fenix-crud-app.vercel.app/ventas",
-    "https://fenix-crud-app.vercel.app/prendas",
-    
-    
-    
+    "https://fenix-crud-app.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8080",
+    "http://localhost:8000",
+    "http://127.0.0.1:8080",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174", 
+    "http://localhost:5173"
 ]
 
 # Application definition
@@ -211,21 +214,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8080",
-    "http://localhost:8000",
-    "http://127.0.0.1:8080",
-    "http://127.0.0.1:8000",
-    "http://127.0.0.1:5174",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174", 
-    "http://localhost:5173",
-]
-
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
