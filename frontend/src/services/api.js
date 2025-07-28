@@ -13,11 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Agregar token de autenticación si existe
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+
   },
   (error) => {
     return Promise.reject(error);
