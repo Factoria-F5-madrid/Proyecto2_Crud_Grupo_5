@@ -9,6 +9,7 @@ import telasRojas from '@/assets/tela_1.png';
 import telasNaranjas from '@/assets/tela_2.png';
 import AnimatedText from './AnimatedText.jsx';
 import AnimatedAsset from '@/components/AnimatedAsset.jsx';
+import { dashboardAPI, handleAPIError } from "@/services/api";
 
 export default function Body() {
   return <main className="flex-1 bg-[#333333]">
