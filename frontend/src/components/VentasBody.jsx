@@ -115,7 +115,6 @@ const VentasApp = () => {
     // Validaciones requeridas
     if (!orderData.customer) errors.push('Debe seleccionar un cliente');
     // Solo requerir usuaria para nuevas órdenes, no para ediciones
-    if (!isEditing && !orderData.usuaria) errors.push('Debe seleccionar una usuaria');
     if (!orderData.orderDate) errors.push('Debe ingresar la fecha de la orden');
     if (!orderData.product) errors.push('Debe seleccionar una prenda');
     if (!orderData.quantity || parseInt(orderData.quantity) < 1) errors.push('Debe ingresar una cantidad válida');
@@ -251,9 +250,13 @@ const VentasApp = () => {
   
   const handleQuickStatusUpdate = async (orderId, newStatus) => {
     try {
-      await orderAPI.partialUpdate(orderId, { status: newStatus });
+await orderAPI.partialUpdate(orderId, { status: newStatus });
       toast.success(`Estado actualizado a ${getStatusText(newStatus)}`);
-      await fetchOrders();
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order.id === orderId ? {...order, status: newStatus} : order
+        )
+      );
     } catch (error) {
       const errorInfo = handleAPIError(error);
       toast.error(`Error al actualizar estado: ${errorInfo.message}`);
@@ -541,11 +544,10 @@ const VentasApp = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Usuaria que registra la venta *
                   </label>
-                  <select
+<select
                     value={orderData.usuaria}
                     onChange={(e) => setOrderData({...orderData, usuaria: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    required
                   >
                     <option value="">Seleccione una usuaria</option>
                     {users.map(user => (
