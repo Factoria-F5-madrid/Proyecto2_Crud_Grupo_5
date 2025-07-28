@@ -19,7 +19,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['fenix-backend.onrender.com',
                  'fenix-pbad.onrender.com']
 CORS_ALLOWED_ORIGINS = [
-    "fenix-appvercel.app"
+    "https://proyecto2-crud-grupo-5-git-main-johiortizs-projects.vercel.app",
+    "https://fenix-crud-app.vercel.app/",
+    "https://fenix-crud-app.vercel.app/usuarias",
+    "https://fenix-crud-app.vercel.app/clientes",
+    "https://fenix-crud-app.vercel.app/ventas",
+    "https://fenix-crud-app.vercel.app/prendas",
+    
+    
+    
 ]
 
 # Application definition
