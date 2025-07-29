@@ -20,6 +20,17 @@ const CRUDApplication = () => {
   });
   
   const [categories, setCategories] = useState([]);
+  
+  // Categorías estáticas para el formulario y filtros
+  const staticCategories = [
+    { id: 'camisetas', name: 'Camisetas' },
+    { id: 'pantalon', name: 'Pantalón' },
+    { id: 'hombre', name: 'Hombre' },
+    { id: 'mujer', name: 'Mujer' },
+    { id: 'nino', name: 'Niño' },
+    { id: 'verano', name: 'Verano' },
+    { id: 'invierno', name: 'Invierno' }
+  ];
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -34,7 +45,8 @@ const CRUDApplication = () => {
   // Cargar datos al montar el componente
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
+    // Cargar categorías estáticas
+    setCategories(staticCategories);
   }, []);
 
   const fetchProducts = async () => {
@@ -187,7 +199,7 @@ const CRUDApplication = () => {
                   required
                 >
                   <option value="">Seleccionar Categoría</option>
-                  {categories.map(category => (
+                  {staticCategories.map(category => (
                     <option key={category.id} value={category.id}>{category.name}</option>
                   ))}
                 </select>
@@ -336,10 +348,10 @@ const CRUDApplication = () => {
                 onChange={(e) => setFilterCategory(e.target.value)}
                 className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
-                <option value="">All Categories</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Clothing">Clothing</option>
-                <option value="Books">Books</option>
+                <option value="">Todas las Categorías</option>
+                {staticCategories.map(category => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -351,7 +363,10 @@ const CRUDApplication = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAndSortedItems.map((item) => {
-                const categoryName = categories.find(cat => cat.id === item.category)?.name || 'Sin categoría';
+                // Buscar primero en categorías estáticas, luego en categorías de la API
+                const categoryName = staticCategories.find(cat => cat.id === item.category)?.name || 
+                                   categories.find(cat => cat.id === item.category)?.name || 
+                                   'Sin categoría';
                 const imageUrl = item.image ? (item.image.startsWith('http') ? item.image : `http://localhost:8000${item.image}`) : "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
                 
                 return (
