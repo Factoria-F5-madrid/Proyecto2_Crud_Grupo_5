@@ -1,21 +1,48 @@
 import axios from 'axios';
 
-// Configuración base de axios
+const isDev = import.meta.env.MODE === 'development';
+const isProd = import.meta.env.PROD;
+
+// Configuración de base URL según el entorno
+let baseURL;
+if (isDev) {
+  // En desarrollo usar el proxy de Vite
+  baseURL = '/api';
+} else {
+  // En producción usar directamente el servidor de Render
+  baseURL = 'https://fenix-pbad.onrender.com/api';
+}
+
+console.log('API Configuration:', {
+  isDev,
+  isProd,
+  baseURL,
+  mode: import.meta.env.MODE
+});
+
 const api = axios.create({
-  baseURL: 'https://fenix-pbad.onrender.com',
-  timeout: 10000,
+  baseURL: baseURL,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
+  withCredentials: false,
 });
 
 // Interceptor para requests
 api.interceptors.request.use(
   (config) => {
+    console.log('Request config:', config);
     // Agregar token de autenticación si existe
-
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -178,10 +205,19 @@ export const downloadFile = (blob, filename) => {
 
 // Utilidades para manejo de errores
 export const handleAPIError = (error) => {
+  console.error('API Error:', error);
+  
   if (error.response) {
     // Error de respuesta del servidor
     const status = error.response.status;
     const data = error.response.data;
+    
+    console.error('Response Error:', {
+      status,
+      data,
+      headers: error.response.headers,
+      config: error.config
+    });
     
     switch (status) {
       case 400:
@@ -197,14 +233,23 @@ export const handleAPIError = (error) => {
       case 500:
         return { type: 'server', message: 'Error interno del servidor' };
       default:
-        return { type: 'unknown', message: 'Error desconocido' };
+        return { type: 'unknown', message: `Error ${status}: ${data?.message || 'Error desconocido'}` };
     }
   } else if (error.request) {
     // Error de red
-    return { type: 'network', message: 'Error de conexión' };
+    console.error('Network Error:', {
+      request: error.request,
+      config: error.config,
+      message: error.message
+    });
+    return { type: 'network', message: `Error de conexión: ${error.message}` };
   } else {
     // Error de configuración
-    return { type: 'config', message: 'Error de configuración' };
+    console.error('Config Error:', {
+      message: error.message,
+      config: error.config
+    });
+    return { type: 'config', message: `Error de configuración: ${error.message}` };
   }
 };
 

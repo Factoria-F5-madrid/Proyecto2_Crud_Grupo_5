@@ -16,23 +16,31 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fenix-pbad.onrender.com/api',
-                 'fenix-pbad.onrender.com']
+ALLOWED_HOSTS = ['fenix-pbad.onrender.com',
+                 'localhost',
+                 '127.0.0.1',
+                 '*']
 
+# Configuración de CORS actualizada
 CORS_ALLOWED_ORIGINS = [
+    # Producción
     "https://proyecto2-crud-grupo-5-git-main-johiortizs-projects.vercel.app",
     "https://fenix-crud-app.vercel.app",
     "https://fenix-crud.onrender.com",
+    "https://proyecto2-crud-grupo-5.vercel.app",
+    "https://frontend-fenix.vercel.app",
+    
+    # Desarrollo
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:8080",
-    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
     "http://127.0.0.1:8080",
     "http://127.0.0.1:8000",
-    "http://127.0.0.1:5174",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174", 
-    "http://localhost:5173"
+    "http://localhost:8000",
 ]
 
 # Application definition
@@ -58,7 +66,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -223,6 +230,15 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -234,3 +250,6 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Permitir CORS preflight requests
+CORS_PREFLIGHT_MAX_AGE = 86400

@@ -114,21 +114,21 @@ Hicimos una selección de herramientas fiables para garantizar que FÉNIX sea un
 
 ---
 
-## Guía de Inicio Rápido para Desarrolladores
+## Guía de Configuración y Ejecución
 
 ### Pre-requisitos
 
-* Git
-* Python 3.x y Pip
-* Node.js y npm
-* Un servidor de MySQL en funcionamiento
+- Git
+- Python 3.x y Pip
+- Node.js y npm
+- Un servidor de MySQL en funcionamiento
 
 ### Instalación del Backend (Django)
 
 ```bash
-# 1. Clona el repositorio y entra en la carpeta del backend
+# 1. Clona el repositorio y navega a la carpeta del backend
 git clone https://github.com/Factoria-F5-madrid/Proyecto2_Crud_Grupo_5.git
-cd Proyecto2_Crud_Grupo_5/backend
+cd fenix
 
 # 2. Crea y activa un entorno virtual
 python -m venv venv
@@ -137,12 +137,37 @@ source venv/bin/activate  # En Windows: venv\Scripts\activate
 # 3. Instala las dependencias
 pip install -r requirements.txt
 
-# 4. Configura el archivo .env con tus credenciales de BD y aplica las migraciones
-python manage.py migrate
+# 4. Configura el archivo .env
+cp .env.example .env
 
-# 5. Inicia el servidor
-python manage.py runserver
+# 5. Aplica las migraciones
+django-admin migrate
+
+# 6. Ejecuta el servidor de desarrollo
+django-admin runserver
 # El backend estará disponible en http://127.0.0.1:8000
+```
+
+### Instalación del Frontend (React + Vite)
+
+```bash
+# 1. Navega a la carpeta del frontend
+cd ../frontend
+
+# 2. Instala las dependencias
+npm install
+
+# 3. Ejecuta el servidor de desarrollo
+npm run dev
+# El frontend estará disponible en http://localhost:5173
+```
+
+### Pruebas de Conectividad
+
+Para verificar la conectividad entre los componentes frontend y backend, ejecuta el siguiente script:
+
+```bash
+./test-connectivity.sh
 ```
 
 ---
