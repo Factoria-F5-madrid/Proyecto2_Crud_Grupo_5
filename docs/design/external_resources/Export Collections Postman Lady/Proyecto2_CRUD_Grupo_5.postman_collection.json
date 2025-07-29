@@ -1,0 +1,575 @@
+{
+	"info": {
+		"_postman_id": "d60144af-9592-4e41-8a5e-030dde76d280",
+		"name": "Proyecto2_CRUD_Grupo_5",
+		"description": "Implementaremos y desarrollaremos una APIs, permitiendo enviar solicitudes a servicios web y recibir respuestas. Esta herramienta facilita la creación, prueba, documentación y monitorización de APIs.\n\n- Testear colecciones o catálogos de APIs tanto para Frontend como para Backend.\n    \n- Organizar en carpetas, funcionalidades y módulos los servicios web.\n    \n- Permite gestionar el ciclo de vida (conceptualización y definición, desarrollo, monitoreo y mantenimiento) de nuestra **API**.\n    \n- Generar documentación de nuestras APIs.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46985270",
+		"_collection_link": "https://ladyfb89-4953856.postman.co/workspace/PROYECTO_CRUD_GRUPO5~fd1c1319-e6a4-44c0-b954-39c1c44d825f/collection/46985270-d60144af-9592-4e41-8a5e-030dde76d280?action=share&source=collection_link&creator=46985270"
+	},
+	"item": [
+		{
+			"name": "Categorias",
+			"item": [
+				{
+					"name": "Listar_Categorias",
+					"item": [
+						{
+							"name": "Listar Todas las Categorías",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										""
+									]
+								},
+								"description": "Endpoint GET.este ENDPOINT nos permite listar todas las categorias"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Crear_Categoria",
+					"item": [
+						{
+							"name": "Crear Nueva Categoria 409 Conflict",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Prendas Superiores\",\r\n    \"description\":\"En esta sección encontraremos ropa como: top, camisetas, etc \"\r\n\r\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										""
+									]
+								},
+								"description": "Enpoint POST. Intentamos crear  una nuevo NOMBRE de CATEGORIA el cual\r\n ya existe : Prendas Superiores.Generando un error: 409 Conflict"
+							},
+							"response": []
+						},
+						{
+							"name": "Crear Nueva Categoria",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Basics clothes\",\r\n    \"description\":\"En esta sección encontraremos .. \"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										""
+									]
+								},
+								"description": "Endpoint POST.Añadimos una nueva categoria Basics  clothes \r\na CATEGORIAS.Generando un codigo: 201 Created"
+							},
+							"response": []
+						},
+						{
+							"name": "Crear Nueva Categoria  BAD REQUEST",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Basics\",\r\n    \"description\": ,\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										""
+									]
+								},
+								"description": "Endpoint POST.El citado endpoint esta intentado agregar una DESCRIPCION pero como no hemos añadido una \",\" despues del contenido de la descripcion (error de sintaxis) da como resultado un : 400 BAD REQUEST."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Obtener_Detalle_Categoria",
+					"item": [
+						{
+							"name": "Obtener Detalle Categoria ID=2",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"2",
+										""
+									]
+								},
+								"description": "Endpoint  GET. Listamos los productos que pertenecen al ID=2 de categorias"
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Detalle Gategoria ID=1",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"1",
+										""
+									]
+								},
+								"description": "Endpoint GET. Obtenemos los productos del ID =1 de\r\nCATEGORIAS que corresponde a la categoria : PRENDAS SUPERIORES "
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Actualizar_Categoría_PUT",
+					"item": [
+						{
+							"name": "Actualizar Nombre Categoria ID = 4",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Accesorios\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/4/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"4",
+										""
+									]
+								},
+								"description": "EndPoint PUT.Actualiza el nombre del ID = 4 Categoria que corresponde a Otros por un nuevo nombre de categorias a **\\= Accesorios**. Dando como respuesta: 200 OK"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Nombre Categoria INTERNAL SERVER ERROR",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/10/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"10",
+										""
+									]
+								},
+								"description": "Endpoint PUT. Intentamos actualizar el ID = 10 en especifico el nombre de esta categoria .Pero el ID = 10 NO EXISTE generando un : 500 Internal Server Error"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Description Categoria BAD REQUEST",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"description\":\"En esta seccion hay prendas como falda, shorts, faldones\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"2",
+										""
+									]
+								},
+								"description": "Endpoint PUT . Intentamos actualizar el campo : description AÑADIENDO \r\nuna descripcion(texto) pero no añadimos al final  de la  descripcion una \",\"(sintaxix mal formada ),generando: 400 BAD REQUEST(Codigo de Error)  "
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Actualizar_Categoria_PATCH",
+					"item": [
+						{
+							"name": "Añadiendo Description Categoria ID=9 Internal Server Error",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"description\":\"En esta seccion hay prendas muy variadas\"\r\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/9/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"9",
+										""
+									]
+								},
+								"description": "Endpoint PATCH. Intentamos agregar una descripcion al ID = 9 de categorias el cual NO EXISTE .Generando un INTERNAL SERVER ERROR"
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Nombre Categoria ID =2 con NOMBRE 409 CONFLICT",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Accesorios\",\r\n    \"description\":\"aqui hay prendas como faldas, shorts, etc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"2",
+										""
+									]
+								},
+								"description": "Endpoint PATCH. Intentamos cambiar el nombre del ID =2(Prendas inferiores) de CATEGORIAS con un nombre ya EXISTENTE(Accesorios).Generando un error: 409 Conflict"
+							},
+							"response": []
+						},
+						{
+							"name": "Añadiendo Description Categoria ID = 1 ",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"description\":\"En esta seccion hay prendas como top, camisetas y polos\"\r\n}"
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"1",
+										""
+									]
+								},
+								"description": "Endpoint PATCH.Agregamos al ID=1 de CATEGORIA: Prendas Superiores una descripción.Resolviendose de manera satisfactoria :200 OK.\r\n\r\n\r\n"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Eliminar_Categoria",
+					"item": [
+						{
+							"name": "Eliminando CATEGORIA ID = 8 Categoria",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/8/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"8",
+										""
+									]
+								},
+								"description": "Endpoint DELETE.Este endpoint nos permite eliminar ID= 8 de categorias(Basics clothes)  \nde manera satisfactoria ya que existe este id, generando una respuesta: 204 NO CONTENT"
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminando CATEGORIA ID= 6  , 500 INTERNAL SERVER ERROR",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/categorias/6/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"categorias",
+										"6",
+										""
+									]
+								},
+								"description": "EndPoint DELETE. Con este endpoint eliminamos el ID =6, el cual no existe y por tanto genera un mensaje: 500 INTERNAL SERVER ERROR"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

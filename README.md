@@ -1,8 +1,8 @@
 
-
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1XSOcWUgoqiv2dy-RT8B0ljGmzKK0ZLhL" alt="Proyecto FÉNIX portada" width="150%">
+  <img src="https://drive.google.com/uc?export=view&id=1mt7-oA2GpDr3d1DHy2thLNg_mD4kN2qt" alt="Proyecto FÉNIX portada" width="100%">
 </p>
+
 
 <div align="justify"
 ## ¿Qué es FÉNIX?
