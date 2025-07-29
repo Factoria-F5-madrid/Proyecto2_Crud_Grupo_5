@@ -140,10 +140,11 @@ const CRUDApplication = () => {
 
   const filteredAndSortedItems = items
     .filter(item => {
-      const matchesCategory = !filterCategory || item.category === parseInt(filterCategory);
+      const matchesCategory = !filterCategory || 
+        (filterCategory === 'sin-categoria' ? !item.category : item.category === parseInt(filterCategory));
       const matchesSearch = !searchQuery || 
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (categories.find(cat => cat.id === item.category)?.name || '').toLowerCase().includes(searchQuery.toLowerCase());
+        (categories.find(cat => cat.id === item.category)?.name || 'Sin categoría').toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
@@ -184,7 +185,6 @@ const CRUDApplication = () => {
                   value={formData.category}
                   onChange={handleInputChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  required
                 >
                   <option value="">Seleccionar Categoría</option>
                   {categories.map(category => (
